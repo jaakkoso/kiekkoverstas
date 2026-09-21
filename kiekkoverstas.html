@@ -1,73 +1,94 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F3F6F5">
 <title>Kiekkoverstas</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
 :root{
-  --bg:#F6F8FA; --surface:#FFFFFF; --surface2:#F1F4F8; --line:#E4E9EF; --line-strong:#CFD7E1;
-  --ink:#16202B; --ink2:#5B6878; --ink3:#8D99A8;
-  --accent:#1A6E8E; --accent-soft:#E4F0F5;
-  --drive:#CC5F2A; --on-drive:#FFFFFF; --nd:#5B6878;
-  --good:#2E7D5F; --warn:#96660E; --crit:#C0442C;
-  --good-bg:#E8F4EE; --warn-bg:#FBF1DE; --crit-bg:#FCEBE6;
+  --bg:#F3F6F5; --surface:#FFFFFF; --surface2:#F7F9F9; --line:#E3E8E8; --line-strong:#CBD4D5;
+  --ink:#12181B; --ink2:#4C5A60; --ink3:#6C787E;
+  --accent:#145C6B; --accent-soft:#E3EFF1; --on-accent:#FFFFFF;
+  --drive:#C4572A; --drive-soft:#FAEBE2; --on-drive:#FFFFFF; --nd:#4F646E; --nd-soft:#EAEEF0;
+  --good:#1F6B4F; --warn:#8A5A0C; --crit:#AA3A22;
+  --good-bg:#E2F0E9; --warn-bg:#F8EEDC; --crit-bg:#FBE8E2;
+  --rail:#FFFFFF;
   --shadow:0 1px 2px rgba(22,32,43,.04), 0 10px 26px -18px rgba(22,32,43,.22);
   --shadow-lift:0 1px 3px rgba(22,32,43,.06), 0 14px 30px -20px rgba(22,32,43,.3);
-  --font-d:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --font-d:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
   --font-b:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
   --font-m:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0F151A; --surface:#161E25; --surface2:#1C262E; --line:#2A353E; --line-strong:#3C4954;
-    --ink:#E7EEF4; --ink2:#9BAAB7; --ink3:#7A8895;
-    --accent:#5FB3D0; --accent-soft:#162831;
-    --drive:#E8905B; --on-drive:#221208; --nd:#9BAAB7;
-    --good:#5CBE93; --warn:#D9AC4E; --crit:#E8836B;
-    --good-bg:#12271F; --warn-bg:#2A2416; --crit-bg:#2B1A16;
+    --bg:#0E1416; --surface:#161E21; --surface2:#1D272A; --line:#2A3639; --line-strong:#3B4A4E;
+    --ink:#E6EEEF; --ink2:#9DACB0; --ink3:#859498;
+    --accent:#5FB7C7; --accent-soft:#14313A; --on-accent:#07171C;
+    --drive:#E38A5B; --drive-soft:#2E1D13; --on-drive:#221208; --nd:#93A5AC; --nd-soft:#1E2A2E;
+    --good:#5DBE94; --warn:#D6A64F; --crit:#E8836B;
+    --good-bg:#12291F; --warn-bg:#2A2214; --crit-bg:#2C1813;
+    --rail:#121A1D;
     --shadow:0 1px 2px rgba(0,0,0,.35), 0 10px 26px -18px rgba(0,0,0,.75);
     --shadow-lift:0 1px 3px rgba(0,0,0,.4), 0 14px 30px -20px rgba(0,0,0,.85);
   }
 }
 :root[data-theme="dark"]{
-    --bg:#0F151A; --surface:#161E25; --surface2:#1C262E; --line:#2A353E; --line-strong:#3C4954;
-  --ink:#E7EEF4; --ink2:#9BAAB7; --ink3:#7A8895;
-  --accent:#5FB3D0; --accent-soft:#162831;
-  --drive:#E8905B; --on-drive:#221208; --nd:#9BAAB7;
-  --good:#5CBE93; --warn:#D9AC4E; --crit:#E8836B;
-  --good-bg:#12271F; --warn-bg:#2A2416; --crit-bg:#2B1A16;
+    --bg:#0E1416; --surface:#161E21; --surface2:#1D272A; --line:#2A3639; --line-strong:#3B4A4E;
+  --ink:#E6EEEF; --ink2:#9DACB0; --ink3:#859498;
+  --accent:#5FB7C7; --accent-soft:#14313A; --on-accent:#07171C;
+  --drive:#E38A5B; --drive-soft:#2E1D13; --on-drive:#221208; --nd:#93A5AC; --nd-soft:#1E2A2E;
+  --good:#5DBE94; --warn:#D6A64F; --crit:#E8836B;
+  --good-bg:#12291F; --warn-bg:#2A2214; --crit-bg:#2C1813;
+  --rail:#121A1D;
   --shadow:0 1px 2px rgba(0,0,0,.35), 0 10px 26px -18px rgba(0,0,0,.75);
   --shadow-lift:0 1px 3px rgba(0,0,0,.4), 0 14px 30px -20px rgba(0,0,0,.85);
 }
 *{box-sizing:border-box}
-body{background:var(--bg); color:var(--ink); font-family:var(--font-b); font-size:15px; line-height:1.58; margin:0; -webkit-font-smoothing:antialiased;}
-h1,h2,h3{font-family:var(--font-d); font-weight:700; text-wrap:balance; margin:0; letter-spacing:-.01em}
+body{background:var(--bg); color:var(--ink); font-family:var(--font-b); font-size:14.5px; line-height:1.55; margin:0; -webkit-font-smoothing:antialiased;}
+h1,h2,h3{font-family:var(--font-d); font-weight:600; text-wrap:balance; margin:0; letter-spacing:-.015em}
+.ic{flex:0 0 auto}
 p{margin:0}
 a{color:var(--accent)}
 
 /* Header */
-.top{position:sticky; top:env(safe-area-inset-top,0px); z-index:20; background:color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter:saturate(180%) blur(14px); border-bottom:1px solid var(--line);}
-.top-in{max-width:1120px; margin:0 auto; padding:0 16px;}
-.brand{display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding-block:14px 8px;}
-.brand h1{font-size:20px; letter-spacing:-.025em}
-.brand .sub{color:var(--ink3); font-size:12.5px; font-family:var(--font-m);}
-.tabs{display:flex; gap:4px; overflow-x:auto; scrollbar-width:none; padding-block:2px 10px;}
-.tabs::-webkit-scrollbar{display:none}
-.tab{appearance:none; border:0; background:none; font:inherit; font-size:13.5px; font-weight:500; color:var(--ink2); padding:8px 14px; cursor:pointer; white-space:nowrap; border-radius:999px; transition:background .15s ease, color .15s ease;}
+/* App shell */
+.app{display:flex; min-height:100vh; align-items:flex-start}
+.rail{width:232px; flex:0 0 232px; position:sticky; top:0; height:100vh; overflow-y:auto; background:var(--rail); border-right:1px solid var(--line); padding:22px 16px; display:flex; flex-direction:column; gap:26px}
+.brandrow{display:flex; align-items:center; gap:10px; padding:0 4px}
+.brandrow .nm{font-family:var(--font-d); font-weight:700; font-size:15.5px; letter-spacing:-.02em; color:var(--ink)}
+.eyebrow{font-family:var(--font-m); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink3); font-weight:500}
+.tabs{display:flex; flex-direction:column; gap:3px}
+.tab{appearance:none; border:0; background:none; font:inherit; font-size:14px; font-weight:500; color:var(--ink2); padding:9px 12px; cursor:pointer; display:flex; align-items:center; gap:11px; width:100%; text-align:left; border-radius:11px; transition:background .15s ease, color .15s ease}
+.tab .ic{color:var(--ink3)}
 .tab:hover{color:var(--ink); background:var(--surface2)}
-.tab[aria-selected="true"]{color:var(--on-drive); background:var(--drive); font-weight:600;}
+.tab[aria-selected="true"]{color:var(--on-accent); background:var(--accent); font-weight:600}
+.tab[aria-selected="true"] .ic{color:var(--on-accent)}
 .tab:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.rail-foot{margin-top:auto; border-top:1px solid var(--line); padding-top:16px; display:flex; flex-direction:column; gap:8px}
+.theme-seg{display:flex; gap:3px; background:var(--surface2); border:1px solid var(--line); border-radius:11px; padding:3px}
+.theme-seg button{flex:1; appearance:none; border:0; background:none; font:inherit; font-size:12px; font-weight:500; color:var(--ink3); padding:6px 0; border-radius:8px; cursor:pointer}
+.theme-seg button[aria-pressed="true"]{background:var(--surface); color:var(--ink); font-weight:600; box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.theme-seg button:focus-visible{outline:2px solid var(--accent)}
+.maincol{flex:1 1 auto; min-width:0}
+.topbar{position:sticky; top:env(safe-area-inset-top,0px); z-index:20; min-height:68px; display:flex; align-items:center; gap:20px; padding:10px 28px; background:color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter:saturate(170%) blur(12px); border-bottom:1px solid var(--line)}
+.topbar h1{font-size:19px}
+.tb-sub{font-family:var(--font-m); font-size:11.5px; color:var(--ink3); margin-top:2px; font-variant-numeric:tabular-nums}
+.proj-mini{display:none}
+.tabbar{display:none}
+.sheet{display:none}
 
-main{max-width:1160px; margin:0 auto; padding:0 16px; padding-block:26px 72px;}
+main{max-width:1200px; margin:0 auto; padding:0 28px; padding-block:24px 72px;}
 section[hidden]{display:none}
 
-.card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:22px; box-shadow:var(--shadow);}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:20px 22px;}
 .card + .card{margin-top:18px}
 .card h2{font-size:17px; margin-bottom:5px; letter-spacing:-.02em}
-.card h3{font-size:13px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink2); font-weight:600; font-family:var(--font-b);}
+.card h3{font-family:var(--font-m); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink3); font-weight:500}
 .lede{color:var(--ink2); font-size:14px; max-width:62ch;}
 .stack{display:flex; flex-direction:column; gap:14px}
 .cols{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:18px; align-items:start;}
 .cols + .cols, .cols + .card, .card + .cols{margin-top:18px}
-@media (max-width:900px){ .cols{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:1120px){ .cols{grid-template-columns:minmax(0,1fr)} }
 
 /* Fields */
 .fields{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 14px; margin-top:14px}
@@ -80,17 +101,17 @@ input[type=number], select{font:inherit; font-family:var(--font-m); font-size:14
 input[type=number]:hover, select:hover{border-color:var(--ink3)}
 input[type=number]:focus, select:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
 .side-head{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:16px; font-family:var(--font-b);}
-.side-head span{font-size:11.5px; text-transform:uppercase; letter-spacing:.08em; font-weight:600; display:flex; align-items:center; gap:7px}
+.side-head span{font-family:var(--font-m); font-size:10px; text-transform:uppercase; letter-spacing:.14em; font-weight:500; color:var(--ink3); display:flex; align-items:center; gap:7px}
 .dot{width:9px; height:9px; border-radius:50%; flex:0 0 auto}
 .dot.d{background:var(--drive)} .dot.n{background:var(--nd)}
 @media (max-width:480px){ .side-head{display:none} }
 
 /* Results */
 .res{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:4px}
-.res-item{background:var(--surface2); border:1px solid var(--line); border-radius:13px; padding:14px 15px; border-left:3px solid var(--line-strong);}
-.res-item.d{border-left-color:var(--drive)}
-.res-item.n{border-left-color:var(--nd)}
-.res-item .k{font-size:11.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink2); font-weight:600}
+.res-item{background:var(--surface2); border:1px solid var(--line); border-radius:13px; padding:13px 15px; border-top:3px solid var(--line-strong);}
+.res-item.d{border-top-color:var(--drive)}
+.res-item.n{border-top-color:var(--nd)}
+.res-item .k{font-family:var(--font-m); font-size:10px; text-transform:uppercase; letter-spacing:.14em; color:var(--ink3); font-weight:500}
 .res-item .v{font-family:var(--font-m); font-size:27px; font-weight:500; letter-spacing:-.02em; font-variant-numeric:tabular-nums; line-height:1.15; margin-top:2px}
 .res-item .v small{font-size:14px; color:var(--ink2); font-weight:400}
 .res-item .s{font-size:12px; color:var(--ink3); font-family:var(--font-m); margin-top:3px}
@@ -136,10 +157,10 @@ input[type=number]:focus, select:focus{outline:none; border-color:var(--accent);
 .tag{display:inline-block; font-family:var(--font-m); font-size:11.5px; padding:2px 7px; border-radius:5px; background:var(--accent-soft); color:var(--accent); font-weight:500}
 table{width:100%; border-collapse:collapse; font-size:13.5px; margin-top:12px}
 th,td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line)}
-th{font-size:11.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink2); font-weight:600}
+th{font-family:var(--font-m); font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--ink3); font-weight:500}
 td:not(:first-child){font-family:var(--font-m); font-variant-numeric:tabular-nums}
 .tw{overflow-x:auto}
-.advice{background:var(--surface2); border:1px solid var(--line); border-left:3px solid var(--drive); border-radius:13px; padding:16px; margin-top:14px}
+.advice{background:var(--drive-soft); border:1px solid color-mix(in srgb, var(--drive) 30%, transparent); border-radius:13px; padding:16px; margin-top:14px}
 .advice .big{font-family:var(--font-d); font-size:17px; font-weight:700; line-height:1.3}
 .advice ul{margin:9px 0 0; padding-left:18px; color:var(--ink2); font-size:13.5px}
 .advice li{margin-bottom:4px}
@@ -151,13 +172,15 @@ td:not(:first-child){font-family:var(--font-m); font-variant-numeric:tabular-num
 .btn:hover{color:var(--ink); border-color:var(--line-strong); background:var(--surface)}
 .btn:active{transform:translateY(1px)}
 .btn:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:var(--on-accent)}
+.btn.primary:hover{background:var(--accent); color:var(--on-accent); filter:brightness(1.1)}
 .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:12px}
 .foot{color:var(--ink3); font-size:12px; margin-top:26px; text-align:center; font-family:var(--font-m)}
 /* Tension meter */
 .tm-sides{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; margin-top:6px}
 @media (max-width:760px){ .tm-sides{grid-template-columns:minmax(0,1fr); gap:26px} }
 .tm-head{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; border-bottom:1px solid var(--line); padding-bottom:7px}
-.tm-head .lbl{font-size:12px; text-transform:uppercase; letter-spacing:.08em; font-weight:600; display:flex; align-items:center; gap:7px}
+.tm-head .lbl{font-family:var(--font-m); font-size:10px; text-transform:uppercase; letter-spacing:.14em; font-weight:500; color:var(--ink3); display:flex; align-items:center; gap:7px}
 .tm-head .avg{font-family:var(--font-m); font-size:12.5px; color:var(--ink2); font-variant-numeric:tabular-nums}
 .tm-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(56px,1fr)); gap:6px; margin-top:10px}
 .tm-cell{display:flex; flex-direction:column; gap:2px; min-width:0}
@@ -209,7 +232,7 @@ td:not(:first-child){font-family:var(--font-m); font-variant-numeric:tabular-num
 .src.mitattu{background:var(--good-bg); color:var(--good)}
 .src.valmistaja{background:var(--accent-soft); color:var(--accent)}
 .src.arvio{background:var(--warn-bg); color:var(--warn)}
-.spoke-card{background:var(--surface2); border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:13px; padding:14px 16px; margin-top:12px}
+.spoke-card{background:var(--surface2); border:1px solid var(--line); border-radius:13px; padding:14px 16px; margin-top:12px}
 .spoke-card .dims{font-family:var(--font-m); font-size:15px; font-weight:500; color:var(--ink); letter-spacing:-.01em}
 .spoke-card .meta{font-size:12.5px; color:var(--ink2); margin-top:4px}
 textarea{font-family:var(--font-m); font-size:12px; width:100%; min-height:90px; background:var(--surface); border:1px solid var(--line-strong); border-radius:11px; padding:11px 12px; color:var(--ink); resize:vertical}
@@ -218,16 +241,14 @@ input[type=text]{font:inherit; font-size:14px; color:var(--ink); background:var(
 input[type=text]:hover{border-color:var(--ink3)}
 input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
 /* Projects */
-.brand{justify-content:space-between}
-.projbar{display:flex; align-items:center; gap:8px; margin-left:auto; flex-wrap:wrap; padding-block:2px}
-.projbar .pl{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink3); font-weight:600}
-.projbar input{width:auto; min-width:150px; max-width:260px; padding:7px 12px; font-family:var(--font-b); font-size:13.5px; font-weight:600; border-radius:999px}
+.projbar{display:flex; align-items:center; gap:10px; margin-left:auto; border:1px solid var(--line); border-radius:999px; padding:4px 5px 4px 14px; background:var(--surface)}
+.projbar .pl{font-family:var(--font-m); font-size:10px; text-transform:uppercase; letter-spacing:.14em; color:var(--ink3); font-weight:500}
+.projbar input{width:auto; min-width:140px; max-width:230px; padding:5px 8px; font-family:var(--font-b); font-size:13.5px; font-weight:600; border:1px solid transparent; background:none; border-radius:8px}
+.projbar input:hover{border-color:var(--line)}
 .projbar .psave{font-family:var(--font-m); font-size:11px; color:var(--ink3); min-width:74px}
 .projbar .psave.on{color:var(--good)}
 .projbar .btn{padding:7px 14px; font-size:12px; border-radius:999px}
-@media (max-width:700px){ .projbar{width:100%; margin-left:0} .projbar input{flex:1 1 auto; min-width:0} }
-.proj-row{border-left:3px solid transparent}
-.proj-row.active{border-left-color:var(--drive); background:var(--accent-soft)}
+.proj-row.active{border-color:var(--accent); background:var(--accent-soft)}
 .proj-row .when{font-family:var(--font-m); font-size:11px; color:var(--ink3)}
 .tm-cell input[type=text], .tm-cell input[type=number]{padding:7px 3px; text-align:center; font-size:13.5px; border-radius:9px}
 /* Voice */
@@ -243,33 +264,72 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
 .vbar .acts button:hover{color:var(--ink); border-color:var(--ink3)}
 .vbar .acts button[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--surface)}
 @media (max-width:620px){ .vbar{flex-wrap:wrap} .vbar .acts{margin-left:0; width:100%} }
-@media (max-width:560px){ .res{grid-template-columns:minmax(0,1fr)!important} }
+@media (max-width:560px){ .res{grid-template-columns:repeat(2,minmax(0,1fr))!important} .res-item .v{font-size:22px} }
+@media (max-width:900px){
+  .card{padding:16px; border-radius:14px}
+  .card + .card, .cols + .cols, .cols + .card, .card + .cols{margin-top:14px}
+  .cols{gap:14px}
+  /* puhelimessa työ ensin: lukemat ja kiekot ylös, asetukset alas */
+  #p-kireys:not([hidden]){display:flex; flex-direction:column; gap:14px}
+  #p-kireys > *{margin-top:0!important}
+  #p-kireys > .cols:first-child{order:4}
+}
+/* Phone */
+@media (max-width:900px){
+  .rail{display:none}
+  .app{display:block}
+  .topbar{padding:10px 16px; min-height:0; gap:12px}
+  .topbar h1{font-size:17px}
+  .projbar{display:none}
+  .proj-mini{display:inline-flex; align-items:center; gap:7px; margin-left:auto; appearance:none; font:inherit; font-size:12px; font-weight:600; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:6px 11px; cursor:pointer; max-width:46vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .proj-mini i{width:7px; height:7px; border-radius:50%; background:var(--good); flex:0 0 auto}
+  main{padding:0 16px; padding-block:16px 108px}
+  .tabbar{display:flex; position:fixed; left:0; right:0; bottom:0; z-index:30; background:var(--surface); border-top:1px solid var(--line); padding:4px 4px calc(8px + env(safe-area-inset-bottom,0px))}
+  .tabbar button{flex:1; appearance:none; border:0; background:none; font:inherit; display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 0 4px; color:var(--ink3); font-size:10px; font-weight:500; cursor:pointer; min-height:48px}
+  .tabbar button[aria-current="page"]{color:var(--drive); font-weight:600}
+  .tabbar button:focus-visible{outline:2px solid var(--accent); outline-offset:-3px; border-radius:10px}
+  .sheet{display:block; position:fixed; right:10px; bottom:calc(74px + env(safe-area-inset-bottom,0px)); z-index:31; width:230px; background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:8px; box-shadow:0 12px 32px -12px rgba(0,0,0,.35)}
+  .sheet[hidden]{display:none}
+  .sheet .sgo{display:flex; align-items:center; gap:11px; width:100%; appearance:none; border:0; background:none; font:inherit; font-size:14px; font-weight:500; color:var(--ink); padding:11px 10px; border-radius:10px; cursor:pointer; text-align:left}
+  .sheet .sgo[aria-current="page"]{background:var(--accent-soft); color:var(--accent); font-weight:600}
+  .sheet .theme-seg{margin:8px 4px 4px}
+}
 @media (prefers-reduced-motion:reduce){ *{transition:none!important; animation:none!important} }
 </style>
 
-<header class="top">
-  <div class="top-in">
-    <div class="brand">
-      <h1>Kiekkoverstas</h1>
-      <span class="sub">pinnanpituus · pinnoitus · rihtaus · kireys</span>
+<div class="app">
+  <nav class="rail" aria-label="Osiot">
+    <div class="brandrow"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="var(--drive)" stroke-width="1.4" aria-hidden="true"><circle cx="13" cy="13" r="10.5"/><circle cx="13" cy="13" r="2.6"/><path d="M13 2.5v8M13 15.6v7.9M2.5 13h8M15.6 13h7.9M5.6 5.6l5.6 5.6M14.8 14.8l5.6 5.6M20.4 5.6l-5.6 5.6M11.2 14.8l-5.6 5.6"/></svg>
+      <div><div class="nm">Kiekkoverstas</div><div class="eyebrow" style="margin-top:1px">verstastila</div></div>
+    </div>
+    <div class="tabs" role="tablist" aria-orientation="vertical" aria-label="Osiot">
+      <button class="tab" role="tab" id="tab-laskuri" aria-controls="p-laskuri" aria-selected="true"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6.5h15v7h-15z"/><path d="M6 6.5v3M9.5 6.5v4.5M13 6.5v3"/></svg><span>Mitat</span></button>
+      <button class="tab" role="tab" id="tab-pinnoitus" aria-controls="p-pinnoitus" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><circle cx="10" cy="10" r="2"/><path d="M10 2.5v5.5M10 12v5.5M2.5 10H8M12 10h5.5"/></svg><span>Pinnoitus</span></button>
+      <button class="tab" role="tab" id="tab-rihtaus" aria-controls="p-rihtaus" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10c2.5-7 5 7 8 0s5-6 8 1"/><path d="M2 16.5h16"/></svg><span>Rihtaus</span></button>
+      <button class="tab" role="tab" id="tab-kireys" aria-controls="p-kireys" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15a7.5 7.5 0 1 1 14 0"/><path d="M10 15l4-5.5"/><circle cx="10" cy="15" r="1.4"/></svg><span>Kireys</span></button>
+      <button class="tab" role="tab" id="tab-lopetus" aria-controls="p-lopetus" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M6.5 10.2l2.4 2.4 4.6-5"/></svg><span>Viimeistely</span></button>
+      <button class="tab" role="tab" id="tab-db" aria-controls="p-db" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="10" cy="5.5" rx="6.5" ry="2.6"/><path d="M3.5 5.5v9c0 1.4 2.9 2.6 6.5 2.6s6.5-1.2 6.5-2.6v-9"/><path d="M3.5 10c0 1.4 2.9 2.6 6.5 2.6s6.5-1.2 6.5-2.6"/></svg><span>Tietokanta</span></button>
+      <button class="tab" role="tab" id="tab-proj" aria-controls="p-proj" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5.5h5l1.6 2h8.4v9.5h-15z"/></svg><span>Projektit</span></button>
+    </div>
+    <div class="rail-foot">
+      <div class="eyebrow">Teema</div>
+      <div class="theme-seg" role="group" aria-label="Teema"><button data-theme-set="auto" aria-pressed="true">Auto</button><button data-theme-set="light" aria-pressed="false">Vaalea</button><button data-theme-set="dark" aria-pressed="false">Tumma</button></div>
+    </div>
+  </nav>
+  <div class="maincol">
+    <header class="topbar">
+      <div style="min-width:0">
+        <h1 id="tb-title">Mitat ja pinnanpituus</h1>
+        <div class="tb-sub" id="tb-sub"></div>
+      </div>
       <div class="projbar">
         <span class="pl">Projekti</span>
         <input type="text" id="proj-name" aria-label="Aktiivisen projektin nimi" autocomplete="off">
         <span class="psave" id="proj-status">tallennettu</span>
         <button class="btn" id="proj-open">Vaihda</button>
       </div>
-    </div>
-    <div class="tabs" role="tablist" aria-label="Osiot">
-      <button class="tab" role="tab" id="tab-laskuri" aria-controls="p-laskuri" aria-selected="true">1 · Mitat ja pinnanpituus</button>
-      <button class="tab" role="tab" id="tab-pinnoitus" aria-controls="p-pinnoitus" aria-selected="false">2 · Pinnoitus</button>
-      <button class="tab" role="tab" id="tab-rihtaus" aria-controls="p-rihtaus" aria-selected="false">3 · Rihtaus</button>
-      <button class="tab" role="tab" id="tab-kireys" aria-controls="p-kireys" aria-selected="false">4 · Kireysmittaus</button>
-      <button class="tab" role="tab" id="tab-lopetus" aria-controls="p-lopetus" aria-selected="false">5 · Viimeistely</button>
-      <button class="tab" role="tab" id="tab-db" aria-controls="p-db" aria-selected="false">6 · Tietokanta</button>
-      <button class="tab" role="tab" id="tab-proj" aria-controls="p-proj" aria-selected="false">Projektit</button>
-    </div>
-  </div>
-</header>
+      <button class="proj-mini" id="proj-mini" aria-label="Avaa projektit"><i></i><span id="proj-mini-name">Kiekko 1</span></button>
+    </header>
 
 <main>
 
@@ -487,7 +547,7 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
             <option>8</option><option>12</option><option selected>16</option><option>24</option><option>32</option><option>36</option>
           </select>
         </div>
-        <button class="btn" id="ru-voice">Sanele</button>
+        <button class="btn primary" id="ru-voice">Sanele</button>
         <button class="btn" id="ru-example">Esimerkki</button>
         <button class="btn" id="ru-clear">Tyhjennä</button>
       </div>
@@ -712,7 +772,7 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
           <label for="tm-n">Pinnojen määrä</label>
           <select id="tm-n"></select>
         </div>
-        <button class="btn" id="tm-voice">Sanele lukemat</button>
+        <button class="btn primary" id="tm-voice">Sanele lukemat</button>
         <button class="btn" id="tm-example">Täytä esimerkkilukemat</button>
         <button class="btn" id="tm-clear">Tyhjennä</button>
       </div>
@@ -841,7 +901,7 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
 <section id="p-db" role="tabpanel" aria-labelledby="tab-db" hidden>
   <div class="card">
     <h2>Komponenttihaku</h2>
-    <p class="lede" id="db-lede">Hae vanne tai napa nimellä. Lataus vie mitat laskuriin välilehdelle 1.</p>
+    <p class="lede" id="db-lede">Hae vanne tai napa nimellä. Lataus vie mitat Mitat-näkymään.</p>
     <div class="f" style="margin-top:14px">
       <input type="text" id="q2" autocomplete="off" placeholder="Hae nimellä, esim. Mavic, XT, Rigida, Dyad" aria-label="Hae komponenttia">
     </div>
@@ -865,7 +925,7 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
         <input type="text" id="own-name" placeholder="Nimi, esim. Shimano 105 R7000 taka 32r" aria-label="Nimi">
       </div>
       <div class="row">
-        <button class="btn" id="save-rim">Tallenna vanne­arvot</button>
+        <button class="btn primary" id="save-rim">Tallenna vanne­arvot</button>
         <button class="btn" id="save-hub">Tallenna napa-arvot</button>
       </div>
       <ul class="hits" id="own-list"></ul>
@@ -920,7 +980,7 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
       <input type="text" id="new-name" placeholder="Uuden projektin nimi, esim. Gravel-takakiekko" aria-label="Uuden projektin nimi">
     </div>
     <div class="row">
-      <button class="btn" id="proj-new">Uusi projekti</button>
+      <button class="btn primary" id="proj-new">Uusi projekti</button>
       <button class="btn" id="proj-dup">Kopioi tämä projekti</button>
       <span class="hint" style="color:var(--ink3); font-size:12px">Uusi projekti säilyttää vanteen, navan, pinnan ja kalibroinnin mutta tyhjentää mittaukset ja rastit.</span>
     </div>
@@ -967,6 +1027,21 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
 
 <p class="foot">Mittaa itse, laske kahdesti, tilaa pinnat vasta sitten.</p>
 </main>
+  </div>
+  <nav class="tabbar" aria-label="Osiot">
+    <button data-go="tab-laskuri"><svg class="ic" width="21" height="21" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6.5h15v7h-15z"/><path d="M6 6.5v3M9.5 6.5v4.5M13 6.5v3"/></svg><span>Mitat</span></button>
+    <button data-go="tab-pinnoitus"><svg class="ic" width="21" height="21" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><circle cx="10" cy="10" r="2"/><path d="M10 2.5v5.5M10 12v5.5M2.5 10H8M12 10h5.5"/></svg><span>Pinnoitus</span></button>
+    <button data-go="tab-rihtaus"><svg class="ic" width="21" height="21" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10c2.5-7 5 7 8 0s5-6 8 1"/><path d="M2 16.5h16"/></svg><span>Rihtaus</span></button>
+    <button data-go="tab-kireys"><svg class="ic" width="21" height="21" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15a7.5 7.5 0 1 1 14 0"/><path d="M10 15l4-5.5"/><circle cx="10" cy="15" r="1.4"/></svg><span>Kireys</span></button>
+    <button id="more-btn" aria-haspopup="true" aria-expanded="false"><svg class="ic" width="21" height="21" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="4.5" cy="10" r="1.2"/><circle cx="10" cy="10" r="1.2"/><circle cx="15.5" cy="10" r="1.2"/></svg><span>Lisää</span></button>
+  </nav>
+  <div class="sheet" id="more-sheet" hidden>
+    <button class="sgo" data-go="tab-lopetus"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M6.5 10.2l2.4 2.4 4.6-5"/></svg>Viimeistely</button>
+    <button class="sgo" data-go="tab-db"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="10" cy="5.5" rx="6.5" ry="2.6"/><path d="M3.5 5.5v9c0 1.4 2.9 2.6 6.5 2.6s6.5-1.2 6.5-2.6v-9"/><path d="M3.5 10c0 1.4 2.9 2.6 6.5 2.6s6.5-1.2 6.5-2.6"/></svg>Tietokanta</button>
+    <button class="sgo" data-go="tab-proj"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5.5h5l1.6 2h8.4v9.5h-15z"/></svg>Projektit</button>
+    <div class="theme-seg" role="group" aria-label="Teema"><button data-theme-set="auto" aria-pressed="true">Auto</button><button data-theme-set="light" aria-pressed="false">Vaalea</button><button data-theme-set="dark" aria-pressed="false">Tumma</button></div>
+  </div>
+</div>
 
 <script>
 (function(){
@@ -987,17 +1062,134 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
       panel.hidden = !on;
     });
     S.set("kv.tab", btn.id);
+    syncChrome(btn.id);
   }
   tabs.forEach(function(t){
     t.addEventListener("click", function(){ selectTab(t); });
     t.addEventListener("keydown", function(e){
       var i = tabs.indexOf(t);
+      if(e.key === "ArrowDown"){ e.preventDefault(); tabs[(i+1)%tabs.length].focus(); tabs[(i+1)%tabs.length].click(); }
+      if(e.key === "ArrowUp"){ e.preventDefault(); tabs[(i-1+tabs.length)%tabs.length].focus(); tabs[(i-1+tabs.length)%tabs.length].click(); }
       if(e.key === "ArrowRight"){ e.preventDefault(); tabs[(i+1)%tabs.length].focus(); tabs[(i+1)%tabs.length].click(); }
       if(e.key === "ArrowLeft"){ e.preventDefault(); tabs[(i-1+tabs.length)%tabs.length].focus(); tabs[(i-1+tabs.length)%tabs.length].click(); }
     });
   });
+  function currentTabId(){
+    for(var i = 0; i < tabs.length; i++) if(tabs[i].getAttribute("aria-selected") === "true") return tabs[i].id;
+    return "tab-laskuri";
+  }
   var saved = S.get("kv.tab", "tab-laskuri");
   if($(saved)) selectTab($(saved));
+
+
+  /* ---------- Sovellusrunko: otsikko, teema, puhelimen navigointi ---------- */
+  var TITLES = {
+    "tab-laskuri": "Mitat ja pinnanpituus", "tab-pinnoitus": "Pinnoitus", "tab-rihtaus": "Rihtaus",
+    "tab-kireys": "Kireysmittaus", "tab-lopetus": "Viimeistely", "tab-db": "Tietokanta", "tab-proj": "Projektit"
+  };
+  var currentTab = "tab-laskuri";
+
+  function checked(listId){
+    var el = document.getElementById(listId);
+    if(!el) return [0, 0];
+    var b = el.querySelectorAll("input[type=checkbox]"), d = 0;
+    for(var i = 0; i < b.length; i++) if(b[i].checked) d++;
+    return [d, b.length];
+  }
+
+  function updateTopbar(){
+    var id = currentTab, sub = "";
+    try{
+      if(id === "tab-laskuri"){
+        var v = readVals();
+        sub = v.n + " pinnaa · " + (v.xr === v.xl ? v.xr + "-risti" : v.xr + "/" + v.xl + "-risti") + " · ERD " + fmt(v.erd);
+      } else if(id === "tab-pinnoitus"){
+        var c = checked("list-lace"); sub = c[0] + " / " + c[1] + " vaihetta tehty";
+      } else if(id === "tab-rihtaus"){
+        sub = (ruCount || 16) + " mittauspistettä · piste 1 = venttiili";
+      } else if(id === "tab-kireys"){
+        sub = ((tmCount || 16) * 2) + " pinnaa · " + (readCal() ? "kalibrointi käytössä" : "raakalukemat");
+      } else if(id === "tab-lopetus"){
+        var c2 = checked("list-fin"); sub = c2[0] + " / " + c2[1] + " vaihetta tehty";
+      } else if(id === "tab-db"){
+        sub = total().toLocaleString("fi-FI") + " komponenttia · 3 lähdettä";
+      } else if(id === "tab-proj"){
+        sub = PROJECTS.length + " projekti" + (PROJECTS.length === 1 ? "" : "a") + " · automaattitallennus";
+      }
+    }catch(e){ sub = ""; }
+    $("tb-title").textContent = (TITLES && TITLES[id]) || "";
+    $("tb-sub").textContent = sub;
+    try{
+      var a = activeProj();
+      if(a) $("proj-mini-name").textContent = a.name || "Nimetön";
+    }catch(e){}
+  }
+
+  function syncChrome(id){
+    currentTab = id;
+    var bar = document.querySelectorAll("[data-go]");
+    for(var i = 0; i < bar.length; i++){
+      if(bar[i].getAttribute("data-go") === id) bar[i].setAttribute("aria-current", "page");
+      else bar[i].removeAttribute("aria-current");
+    }
+    var more = $("more-btn");
+    if(more){
+      if(id === "tab-lopetus" || id === "tab-db" || id === "tab-proj") more.setAttribute("aria-current", "page");
+      else more.removeAttribute("aria-current");
+    }
+    closeSheet();
+    updateTopbar();
+  }
+
+  function closeSheet(){
+    var sh = $("more-sheet");
+    if(sh && !sh.hidden){ sh.hidden = true; $("more-btn").setAttribute("aria-expanded", "false"); }
+  }
+
+  document.addEventListener("click", function(e){
+    var t = e.target && e.target.closest ? e.target.closest("[data-go]") : null;
+    if(t){
+      var target = $(t.getAttribute("data-go"));
+      if(target){ selectTab(target); window.scrollTo(0, 0); }
+      return;
+    }
+    var mb = e.target && e.target.closest ? e.target.closest("#more-btn") : null;
+    if(mb){
+      var sh = $("more-sheet");
+      sh.hidden = !sh.hidden;
+      mb.setAttribute("aria-expanded", sh.hidden ? "false" : "true");
+      return;
+    }
+    var sheet = $("more-sheet");
+    if(sheet && !sheet.hidden && !(e.target.closest && e.target.closest("#more-sheet"))) closeSheet();
+  });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeSheet(); });
+
+  $("proj-mini").addEventListener("click", function(){
+    selectTab($("tab-proj"));
+    try{ renderProjects(); }catch(err){}
+    window.scrollTo(0, 0);
+  });
+
+  /* Teema: auto seuraa järjestelmää (tai isäntäsivun valintaa), vaalea ja tumma pakottavat */
+  var hostTheme = document.documentElement.getAttribute("data-theme");
+  function applyTheme(mode){
+    var root = document.documentElement;
+    if(mode === "light" || mode === "dark") root.setAttribute("data-theme", mode);
+    else if(hostTheme) root.setAttribute("data-theme", hostTheme);
+    else root.removeAttribute("data-theme");
+    var bs = document.querySelectorAll("[data-theme-set]");
+    for(var i = 0; i < bs.length; i++) bs[i].setAttribute("aria-pressed", bs[i].getAttribute("data-theme-set") === mode ? "true" : "false");
+  }
+  var themeMode = S.get("kv.theme", "auto");
+  applyTheme(themeMode);
+  document.addEventListener("click", function(e){
+    var t = e.target && e.target.closest ? e.target.closest("[data-theme-set]") : null;
+    if(!t) return;
+    themeMode = t.getAttribute("data-theme-set");
+    S.set("kv.theme", themeMode);
+    applyTheme(themeMode);
+  });
 
   /* ---------- Calculator ---------- */
   var numIds = ["erd","offset","hole","fdr","fdl","fcr","fcl","n","xr","xl"];
@@ -1595,7 +1787,7 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
     OWN.h.forEach(function(a, i){ list.push(mkHub(a, true, i)); });
     $("own-list").innerHTML = list.length
       ? list.map(function(x){ return hitHTML(x, true); }).join("")
-      : '<li><div class="sp">Ei omia mittauksia vielä. Syötä arvot välilehdellä 1 ja tallenna ne tästä.</div></li>';
+      : '<li><div class="sp">Ei omia mittauksia vielä. Syötä arvot Mitat-näkymässä ja tallenna ne tästä.</div></li>';
   }
 
   document.addEventListener("click", function(e){
@@ -1914,7 +2106,7 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
   $("ru-voice").addEventListener("click", function(){ startVoice("ru"); });
 
   /* ---------- Projektit ---------- */
-  var GLOBAL_KEYS = { "kv.own":1, "kv.tab":1, "kv.projects":1, "kv.active":1, "kv.tmview":1 };
+  var GLOBAL_KEYS = { "kv.own":1, "kv.tab":1, "kv.projects":1, "kv.active":1, "kv.tmview":1, "kv.theme":1, "kv.vspeak":1 };
 
   function snapshot(){
     var o = {};
@@ -2032,6 +2224,7 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
     a.modified = Date.now();
     saveProjects();
     markSaved();
+    updateTopbar();
     if(!$("p-proj").hidden) renderProjects();
   }
   function scheduleSave(){
@@ -2332,8 +2525,8 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
       }
     }
     out.push('<circle cx="' + C + '" cy="24" r="6" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>');
-    out.push('<text x="' + C + '" y="' + (C - 8) + '" text-anchor="middle" font-family="Archivo, sans-serif" font-size="11" font-weight="700" letter-spacing=".08em" fill="var(--nd)">PYÖREYS</text>');
-    out.push('<text x="' + C + '" y="' + (C + 8) + '" text-anchor="middle" font-family="Archivo, sans-serif" font-size="11" font-weight="700" letter-spacing=".08em" fill="var(--drive)">SIVU = ULKOKEHÄ</text>');
+    out.push('<text x="' + C + '" y="' + (C - 8) + '" text-anchor="middle" font-family="Familjen Grotesk, sans-serif" font-size="11" font-weight="700" letter-spacing=".08em" fill="var(--nd)">PYÖREYS</text>');
+    out.push('<text x="' + C + '" y="' + (C + 8) + '" text-anchor="middle" font-family="Familjen Grotesk, sans-serif" font-size="11" font-weight="700" letter-spacing=".08em" fill="var(--drive)">SIVU = ULKOKEHÄ</text>');
     out.push('<text x="' + C + '" y="' + (C + 24) + '" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="var(--ink3)">asteikko ± ' + fmt(dom, 1) + ' mm</text>');
     svg.innerHTML = out.join("");
   }
@@ -2440,7 +2633,7 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
         });
         if(checked && loose){
           items.push(["all", "Vertaa kireyteen",
-            "Kuoppien kohdalla olevat pinnat ovat usein muuta kehää kireämpiä. Tarkista nämä kohdat välilehden 4 kiekkonäkymästä ennen kuin löysäät — jos ne ovat jo löysiä, vika on vanteessa eikä kireydessä."]);
+            "Kuoppien kohdalla olevat pinnat ovat usein muuta kehää kireämpiä. Tarkista nämä kohdat Kireys-näkymän kiekoista ennen kuin löysäät — jos ne ovat jo löysiä, vika on vanteessa eikä kireydessä."]);
         }
       }
 
@@ -2600,7 +2793,7 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
     var svg = $(id), W = 420, L = 38, R = 412, T = 30, B = 142;
     var real = devs.filter(function(x){ return x !== null; });
     if(real.length < 3){
-      svg.innerHTML = '<text x="6" y="14" font-family="Archivo, sans-serif" font-size="12" font-weight="700" letter-spacing="0.08em" fill="' + sideVar + '">' + title + '</text>' +
+      svg.innerHTML = '<text x="6" y="14" font-family="Familjen Grotesk, sans-serif" font-size="12" font-weight="700" letter-spacing="0.08em" fill="' + sideVar + '">' + title + '</text>' +
         '<text x="210" y="94" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--ink3)">syötä vähintään kolme lukemaa</text>';
       return;
     }
@@ -2609,7 +2802,7 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
     var mid = (T + B) / 2, half = (B - T) / 2;
     var cnt = devs.length, step = (R - L) / cnt, bw = Math.max(3, step * 0.6);
     var o = [];
-    o.push('<text x="6" y="14" font-family="Archivo, sans-serif" font-size="12" font-weight="700" letter-spacing="0.08em" fill="' + sideVar + '">' + title + '</text>');
+    o.push('<text x="6" y="14" font-family="Familjen Grotesk, sans-serif" font-size="12" font-weight="700" letter-spacing="0.08em" fill="' + sideVar + '">' + title + '</text>');
     o.push('<rect x="'+L+'" y="'+(mid - half*10/dom).toFixed(1)+'" width="'+(R-L)+'" height="'+(2*half*10/dom).toFixed(1)+'" fill="var(--good-bg)"/>');
     [20, -20].forEach(function(t){
       if(t <= dom) o.push('<line x1="'+L+'" y1="'+(mid - half*t/dom).toFixed(1)+'" x2="'+R+'" y2="'+(mid - half*t/dom).toFixed(1)+'" stroke="var(--warn)" stroke-width="1" stroke-dasharray="4 4" opacity=".7"/>');
@@ -2655,7 +2848,7 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
     if(!half){ svg.innerHTML = ""; return; }
     var step = 360 / (half * 2);
 
-    out.push('<text x="' + C + '" y="15" text-anchor="middle" font-family="Archivo, sans-serif" font-size="13" font-weight="700" letter-spacing="0.08em" fill="' + sideVar + '">' + title + '</text>');
+    out.push('<text x="' + C + '" y="15" text-anchor="middle" font-family="Familjen Grotesk, sans-serif" font-size="13" font-weight="700" letter-spacing="0.08em" fill="' + sideVar + '">' + title + '</text>');
 
     if(!ring.st || ring.st.n < 3){
       out.push('<circle cx="' + C + '" cy="' + CY + '" r="' + base + '" fill="none" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="4 5"/>');
@@ -2781,7 +2974,7 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
           if(run >= 3){
             items.push(['all', 'Vanteen muoto',
               'Puolella <b>' + names[side] + '</b> kolme peräkkäistä pinnaa (n:o ' + (i-1) + '–' + (i+1) + ') poikkeaa samaan suuntaan. Tämä on vanteen ' +
-              (runDir < 0 ? 'kohouma' : 'kuoppa') + ', ei kireysvika — korjaa <b>korkeusheitto</b> ensin välilehdellä 3, ja mittaa vasta sitten uudelleen.']);
+              (runDir < 0 ? 'kohouma' : 'kuoppa') + ', ei kireysvika — korjaa <b>korkeusheitto</b> ensin Rihtaus-näkymässä, ja mittaa vasta sitten uudelleen.']);
             reported = true;
           }
         }
@@ -2880,5 +3073,6 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
   compute();
   renderLoaded();
   initProjects();
+  syncChrome(currentTabId());
 })();
 </script>
