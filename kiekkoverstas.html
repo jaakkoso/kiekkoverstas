@@ -44,6 +44,7 @@
   --shadow-lift:0 1px 3px rgba(0,0,0,.4), 0 14px 30px -20px rgba(0,0,0,.85);
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--bg); color:var(--ink); font-family:var(--font-b); font-size:14.5px; line-height:1.55; margin:0; -webkit-font-smoothing:antialiased;}
 h1,h2,h3{font-family:var(--font-d); font-weight:600; text-wrap:balance; margin:0; letter-spacing:-.015em}
 .ic{flex:0 0 auto}
@@ -64,6 +65,17 @@ a{color:var(--accent)}
 .tab[aria-selected="true"]{color:var(--on-accent); background:var(--accent); font-weight:600}
 .tab[aria-selected="true"] .ic{color:var(--on-accent)}
 .tab:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.navgroup{display:flex; flex-direction:column; gap:8px}
+.navgroup > .eyebrow{padding:0 12px}
+.rail{gap:22px}
+.tab.start{border:1px solid color-mix(in srgb, var(--accent) 40%, transparent); background:var(--accent-soft); color:var(--accent); padding:11px 12px; align-items:center}
+.tab.start .ic{color:var(--accent)}
+.tab.start .st{display:flex; flex-direction:column; min-width:0; line-height:1.25}
+.tab.start .st1{font-weight:600; font-size:14.5px}
+.tab.start .st2{font-family:var(--font-m); font-size:10.5px; font-weight:400; color:var(--ink2); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.tab.start:hover{background:color-mix(in srgb, var(--accent) 16%, var(--surface)); color:var(--accent)}
+.tab.start[aria-selected="true"]{background:var(--accent); border-color:var(--accent); color:var(--on-accent)}
+.tab.start[aria-selected="true"] .st2{color:color-mix(in srgb, var(--on-accent) 75%, transparent)}
 .rail-foot{margin-top:auto; border-top:1px solid var(--line); padding-top:16px; display:flex; flex-direction:column; gap:8px}
 .theme-seg{display:flex; gap:3px; background:var(--surface2); border:1px solid var(--line); border-radius:11px; padding:3px}
 .theme-seg button{flex:1; appearance:none; border:0; background:none; font:inherit; font-size:12px; font-weight:500; color:var(--ink3); padding:6px 0; border-radius:8px; cursor:pointer}
@@ -274,6 +286,41 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
   #p-kireys > *{margin-top:0!important}
   #p-kireys > .cols:first-child{order:4}
 }
+/* Työ */
+.jobgrid{display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:12px; margin-top:18px}
+.jobcard{appearance:none; font:inherit; text-align:left; cursor:pointer; background:var(--surface2); border:1px solid var(--line); border-radius:14px; padding:16px; display:flex; flex-direction:column; gap:6px; color:var(--ink); transition:border-color .15s ease, background .15s ease}
+.jobcard:hover{border-color:var(--accent); background:var(--surface)}
+.jobcard:focus-visible{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.jobcard .jc-t{font-family:var(--font-d); font-weight:600; font-size:16.5px; letter-spacing:-.015em; display:flex; align-items:center; gap:9px}
+.jobcard .jc-t .ic{color:var(--accent)}
+.jobcard .jc-d{font-size:13px; color:var(--ink2); line-height:1.45}
+.jobcard .jc-m{font-family:var(--font-m); font-size:10.5px; color:var(--ink3); margin-top:auto; padding-top:6px}
+.jhead{display:flex; gap:16px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap}
+.jprog{display:flex; align-items:center; gap:12px; margin-top:16px}
+.jprog span{font-family:var(--font-m); font-size:12px; color:var(--ink2); font-weight:500; white-space:nowrap}
+.jsteps{list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:8px}
+.jstep details{background:var(--surface); border:1px solid var(--line); border-radius:14px; overflow:hidden}
+.jstep.cur details{border-color:var(--accent)}
+.jstep summary{list-style:none; display:flex; align-items:center; gap:12px; padding:13px 16px; cursor:pointer}
+.jstep summary::-webkit-details-marker{display:none}
+.jstep summary:focus-visible{outline:2px solid var(--accent); outline-offset:-2px; border-radius:14px}
+.jstep summary input{width:19px; height:19px; margin:0; accent-color:var(--accent); flex:0 0 auto; cursor:pointer}
+.jstep .jn{font-family:var(--font-m); font-size:11px; color:var(--ink3); flex:0 0 auto}
+.jstep .jt{font-weight:600; font-size:14.5px; min-width:0; flex:1 1 auto}
+.jstep.done .jt{color:var(--ink3); text-decoration:line-through; text-decoration-thickness:1px}
+.jstep .jtool{font-family:var(--font-m); font-size:10.5px; color:var(--accent); background:var(--accent-soft); border-radius:999px; padding:2px 9px; white-space:nowrap; flex:0 0 auto}
+.jstep .jnow{font-family:var(--font-m); font-size:10.5px; color:var(--on-drive); background:var(--drive); border-radius:999px; padding:2px 9px; white-space:nowrap; flex:0 0 auto}
+.jstep .chev{color:var(--ink3); transition:transform .15s ease; flex:0 0 auto}
+.jstep details[open] .chev{transform:rotate(180deg)}
+.jbody{padding:0 16px 16px 59px; display:flex; flex-direction:column; gap:12px}
+.jbody p{font-size:13.5px; color:var(--ink2); line-height:1.55; max-width:68ch}
+.jbody p b{color:var(--ink)}
+.jbody .row{margin-top:0}
+.jobstrip{display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 35%, transparent); border-radius:12px; padding:9px 10px 9px 14px; margin-bottom:16px; font-size:13px; color:var(--ink2)}
+.jobstrip b{color:var(--ink); font-weight:600}
+.jobstrip .btn{margin-left:auto; padding:6px 12px; font-size:12px}
+@media (max-width:620px){ .jbody{padding-left:16px} .jstep .jtool{display:none} }
+
 /* Phone */
 @media (max-width:900px){
   .rail{display:none}
@@ -293,6 +340,8 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
   .sheet .sgo{display:flex; align-items:center; gap:11px; width:100%; appearance:none; border:0; background:none; font:inherit; font-size:14px; font-weight:500; color:var(--ink); padding:11px 10px; border-radius:10px; cursor:pointer; text-align:left}
   .sheet .sgo[aria-current="page"]{background:var(--accent-soft); color:var(--accent); font-weight:600}
   .sheet .theme-seg{margin:8px 4px 4px}
+  .sheet .sl{padding:8px 10px 2px}
+  .sheet .sdiv{height:1px; background:var(--line); margin:6px 4px}
 }
 @media (prefers-reduced-motion:reduce){ *{transition:none!important; animation:none!important} }
 </style>
@@ -302,14 +351,31 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
     <div class="brandrow"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="var(--drive)" stroke-width="1.4" aria-hidden="true"><circle cx="13" cy="13" r="10.5"/><circle cx="13" cy="13" r="2.6"/><path d="M13 2.5v8M13 15.6v7.9M2.5 13h8M15.6 13h7.9M5.6 5.6l5.6 5.6M14.8 14.8l5.6 5.6M20.4 5.6l-5.6 5.6M11.2 14.8l-5.6 5.6"/></svg>
       <div><div class="nm">Kiekkoverstas</div><div class="eyebrow" style="margin-top:1px">verstastila</div></div>
     </div>
-    <div class="tabs" role="tablist" aria-orientation="vertical" aria-label="Osiot">
-      <button class="tab" role="tab" id="tab-laskuri" aria-controls="p-laskuri" aria-selected="true"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6.5h15v7h-15z"/><path d="M6 6.5v3M9.5 6.5v4.5M13 6.5v3"/></svg><span>Mitat</span></button>
-      <button class="tab" role="tab" id="tab-pinnoitus" aria-controls="p-pinnoitus" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><circle cx="10" cy="10" r="2"/><path d="M10 2.5v5.5M10 12v5.5M2.5 10H8M12 10h5.5"/></svg><span>Pinnoitus</span></button>
-      <button class="tab" role="tab" id="tab-rihtaus" aria-controls="p-rihtaus" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10c2.5-7 5 7 8 0s5-6 8 1"/><path d="M2 16.5h16"/></svg><span>Rihtaus</span></button>
-      <button class="tab" role="tab" id="tab-kireys" aria-controls="p-kireys" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15a7.5 7.5 0 1 1 14 0"/><path d="M10 15l4-5.5"/><circle cx="10" cy="15" r="1.4"/></svg><span>Kireys</span></button>
-      <button class="tab" role="tab" id="tab-lopetus" aria-controls="p-lopetus" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M6.5 10.2l2.4 2.4 4.6-5"/></svg><span>Viimeistely</span></button>
-      <button class="tab" role="tab" id="tab-db" aria-controls="p-db" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="10" cy="5.5" rx="6.5" ry="2.6"/><path d="M3.5 5.5v9c0 1.4 2.9 2.6 6.5 2.6s6.5-1.2 6.5-2.6v-9"/><path d="M3.5 10c0 1.4 2.9 2.6 6.5 2.6s6.5-1.2 6.5-2.6"/></svg><span>Tietokanta</span></button>
-      <button class="tab" role="tab" id="tab-proj" aria-controls="p-proj" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5.5h5l1.6 2h8.4v9.5h-15z"/></svg><span>Projektit</span></button>
+    <div class="tabs" role="tablist" aria-label="Työ">
+      <button class="tab start" role="tab" id="tab-tyo" aria-controls="p-tyo" aria-selected="false"><svg class="ic" width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17.5V3"/><path d="M5 3.5h10l-2.2 3.7L15 11H5"/></svg>
+        <span class="st"><span class="st1" id="start-l1">Aloita tästä</span><span class="st2" id="start-l2">Valitse mitä teet</span></span>
+      </button>
+    </div>
+    <div class="navgroup">
+      <div class="eyebrow" id="ng-tools">Työkalut</div>
+      <div class="tabs" role="tablist" aria-labelledby="ng-tools">
+        <button class="tab" role="tab" id="tab-laskuri" aria-controls="p-laskuri" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6.5h15v7h-15z"/><path d="M6 6.5v3M9.5 6.5v4.5M13 6.5v3"/></svg><span>Mitat ja pituus</span></button>
+        <button class="tab" role="tab" id="tab-rihtaus" aria-controls="p-rihtaus" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10c2.5-7 5 7 8 0s5-6 8 1"/><path d="M2 16.5h16"/></svg><span>Rihtaus</span></button>
+        <button class="tab" role="tab" id="tab-kireys" aria-controls="p-kireys" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15a7.5 7.5 0 1 1 14 0"/><path d="M10 15l4-5.5"/><circle cx="10" cy="15" r="1.4"/></svg><span>Kireys</span></button>
+        <button class="tab" role="tab" id="tab-db" aria-controls="p-db" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="10" cy="5.5" rx="6.5" ry="2.6"/><path d="M3.5 5.5v9c0 1.4 2.9 2.6 6.5 2.6s6.5-1.2 6.5-2.6v-9"/><path d="M3.5 10c0 1.4 2.9 2.6 6.5 2.6s6.5-1.2 6.5-2.6"/></svg><span>Tietokanta</span></button>
+      </div>
+    </div>
+    <div class="navgroup">
+      <div class="eyebrow" id="ng-guides">Ohjeet ja tarkistuslistat</div>
+      <div class="tabs" role="tablist" aria-labelledby="ng-guides">
+        <button class="tab" role="tab" id="tab-pinnoitus" aria-controls="p-pinnoitus" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><circle cx="10" cy="10" r="2"/><path d="M10 2.5v5.5M10 12v5.5M2.5 10H8M12 10h5.5"/></svg><span>Pinnoitus</span></button>
+        <button class="tab" role="tab" id="tab-lopetus" aria-controls="p-lopetus" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M6.5 10.2l2.4 2.4 4.6-5"/></svg><span>Viimeistely</span></button>
+      </div>
+    </div>
+    <div class="navgroup">
+      <div class="tabs" role="tablist" aria-label="Projektit">
+        <button class="tab" role="tab" id="tab-proj" aria-controls="p-proj" aria-selected="false"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5.5h5l1.6 2h8.4v9.5h-15z"/></svg><span>Projektit</span></button>
+      </div>
     </div>
     <div class="rail-foot">
       <div class="eyebrow">Teema</div>
@@ -332,6 +398,33 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
     </header>
 
 <main>
+<div class="jobstrip" id="jobstrip" hidden></div>
+
+<!-- ============ TYÖ ============ -->
+<section id="p-tyo" role="tabpanel" aria-labelledby="tab-tyo" hidden>
+  <div id="job-choose">
+    <div class="card">
+      <h2>Mitä teet tänään?</h2>
+      <p class="lede">Valitse työ, niin saat sen vaiheet oikeassa järjestyksessä. Jokaisessa vaiheessa on lyhyt ohje ja suora linkki työkaluun, jota siinä tarvitaan. Edistyminen tallentuu projektiin.</p>
+      <div class="jobgrid" id="jobgrid"></div>
+    </div>
+  </div>
+  <div id="job-run" hidden>
+    <div class="card">
+      <div class="jhead">
+        <div style="min-width:0">
+          <div class="eyebrow">Työ</div>
+          <h2 id="job-title" style="font-size:22px; margin-top:3px"></h2>
+          <p class="lede" id="job-desc" style="margin-top:4px"></p>
+        </div>
+        <button class="btn" id="job-change">Vaihda työtä</button>
+      </div>
+      <div class="jprog"><div class="progress" style="flex:1; margin-top:0"><i id="job-bar"></i></div><span id="job-count"></span></div>
+    </div>
+    <ol class="jsteps" id="jsteps"></ol>
+    <div class="card" id="job-done" hidden style="margin-top:14px"></div>
+  </div>
+</section>
 
 <!-- ============ 1. LASKURI ============ -->
 <section id="p-laskuri" role="tabpanel" aria-labelledby="tab-laskuri">
@@ -1029,15 +1122,19 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
 </main>
   </div>
   <nav class="tabbar" aria-label="Osiot">
+    <button data-go="tab-tyo"><svg class="ic" width="21" height="21" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17.5V3"/><path d="M5 3.5h10l-2.2 3.7L15 11H5"/></svg><span>Työ</span></button>
     <button data-go="tab-laskuri"><svg class="ic" width="21" height="21" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6.5h15v7h-15z"/><path d="M6 6.5v3M9.5 6.5v4.5M13 6.5v3"/></svg><span>Mitat</span></button>
-    <button data-go="tab-pinnoitus"><svg class="ic" width="21" height="21" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><circle cx="10" cy="10" r="2"/><path d="M10 2.5v5.5M10 12v5.5M2.5 10H8M12 10h5.5"/></svg><span>Pinnoitus</span></button>
     <button data-go="tab-rihtaus"><svg class="ic" width="21" height="21" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10c2.5-7 5 7 8 0s5-6 8 1"/><path d="M2 16.5h16"/></svg><span>Rihtaus</span></button>
     <button data-go="tab-kireys"><svg class="ic" width="21" height="21" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15a7.5 7.5 0 1 1 14 0"/><path d="M10 15l4-5.5"/><circle cx="10" cy="15" r="1.4"/></svg><span>Kireys</span></button>
     <button id="more-btn" aria-haspopup="true" aria-expanded="false"><svg class="ic" width="21" height="21" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="4.5" cy="10" r="1.2"/><circle cx="10" cy="10" r="1.2"/><circle cx="15.5" cy="10" r="1.2"/></svg><span>Lisää</span></button>
   </nav>
   <div class="sheet" id="more-sheet" hidden>
-    <button class="sgo" data-go="tab-lopetus"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M6.5 10.2l2.4 2.4 4.6-5"/></svg>Viimeistely</button>
+    <div class="eyebrow sl">Työkalut</div>
     <button class="sgo" data-go="tab-db"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="10" cy="5.5" rx="6.5" ry="2.6"/><path d="M3.5 5.5v9c0 1.4 2.9 2.6 6.5 2.6s6.5-1.2 6.5-2.6v-9"/><path d="M3.5 10c0 1.4 2.9 2.6 6.5 2.6s6.5-1.2 6.5-2.6"/></svg>Tietokanta</button>
+    <div class="eyebrow sl">Ohjeet ja tarkistuslistat</div>
+    <button class="sgo" data-go="tab-pinnoitus"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><circle cx="10" cy="10" r="2"/><path d="M10 2.5v5.5M10 12v5.5M2.5 10H8M12 10h5.5"/></svg>Pinnoitus</button>
+    <button class="sgo" data-go="tab-lopetus"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M6.5 10.2l2.4 2.4 4.6-5"/></svg>Viimeistely</button>
+    <div class="sdiv"></div>
     <button class="sgo" data-go="tab-proj"><svg class="ic" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5.5h5l1.6 2h8.4v9.5h-15z"/></svg>Projektit</button>
     <div class="theme-seg" role="group" aria-label="Teema"><button data-theme-set="auto" aria-pressed="true">Auto</button><button data-theme-set="light" aria-pressed="false">Vaalea</button><button data-theme-set="dark" aria-pressed="false">Tumma</button></div>
   </div>
@@ -1078,16 +1175,222 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
     for(var i = 0; i < tabs.length; i++) if(tabs[i].getAttribute("aria-selected") === "true") return tabs[i].id;
     return "tab-laskuri";
   }
-  var saved = S.get("kv.tab", "tab-laskuri");
+  var saved = S.get("kv.tab", "tab-tyo");
   if($(saved)) selectTab($(saved));
 
 
   /* ---------- Sovellusrunko: otsikko, teema, puhelimen navigointi ---------- */
   var TITLES = {
+    "tab-tyo": "Työ",
     "tab-laskuri": "Mitat ja pinnanpituus", "tab-pinnoitus": "Pinnoitus", "tab-rihtaus": "Rihtaus",
     "tab-kireys": "Kireysmittaus", "tab-lopetus": "Viimeistely", "tab-db": "Tietokanta", "tab-proj": "Projektit"
   };
   var currentTab = "tab-laskuri";
+
+
+  /* ---------- Työt: opastetut työnkulut ---------- */
+  var JICON = {
+    uusi: '<circle cx="10" cy="10" r="7.5"/><circle cx="10" cy="10" r="2"/><path d="M10 2.5v5.5M10 12v5.5M2.5 10H8M12 10h5.5"/>',
+    vaihto: '<path d="M3.5 7h12l-3-3"/><path d="M16.5 13h-12l3 3"/>',
+    rihtaus: '<path d="M2 10c2.5-7 5 7 8 0s5-6 8 1"/><path d="M2 16.5h16"/>',
+    pinna: '<path d="M3.5 16.5L8.5 11.5"/><path d="M11.5 8.5l5-5"/><path d="M8 8l4 4"/>',
+    huolto: '<path d="M3 15a7.5 7.5 0 1 1 14 0"/><path d="M10 15l4-5.5"/><circle cx="10" cy="15" r="1.4"/>'
+  };
+  function jicon(n, size){
+    return '<svg class="ic" width="' + (size || 20) + '" height="' + (size || 20) + '" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + JICON[n] + '</svg>';
+  }
+  var TOOLNAME = { "tab-laskuri":"Mitat", "tab-rihtaus":"Rihtaus", "tab-kireys":"Kireys", "tab-db":"Tietokanta", "tab-pinnoitus":"Pinnoitus", "tab-lopetus":"Viimeistely" };
+
+  var JOBS = {
+    uusi: { t: "Uusi kiekko", d: "Uusi vanne, napa ja pinnat. Mitoista ja pinnatilauksesta pinnoitukseen ja viimeistelyyn.", steps: [
+      { t: "Hae tai mittaa vanne ja napa", go: "tab-laskuri", g: "Avaa mitat",
+        b: "Hae mallit tietokannasta tai mittaa itse: vanteen <b>ERD</b>, laippojen halkaisijat ja keskiöetäisyydet. Mittaa vanteen ERD aina, vaikka se löytyisi tietokannasta — valmistuserät vaihtelevat 1–2 mm." },
+      { t: "Valitse ristiluku ja pinna", go: "tab-laskuri", g: "Avaa laskuri",
+        b: "28–36 pinnalla 3-risti on turvallinen valinta, 24 pinnalla 2-risti. Pinnamalli ratkaisee, tarvitaanko pinnanpidintä ja mikä rivi kireysmittarin taulukosta on oikea." },
+      { t: "Tilaa pinnat ja nipat",
+        b: "Laskuri antaa pituudet molemmille puolille. Pyöristä lähimpään saatavaan, mieluummin alaspäin. Tilaa 2–4 varapinnaa kumpaakin pituutta ja saman verran nippoja." },
+      { t: "Pinnoita kiekko", go: "tab-pinnoitus", g: "Avaa pinnoitusohje",
+        b: "Neljä ryhmää, avainpinna venttiiliaukon viereen. Ohje mukautuu pinnalukuun ja ristilukuun." },
+      { t: "Kiristä ja rihtaa karkeasti", go: "tab-rihtaus", g: "Avaa rihtaus",
+        b: "Nosta kireyttä kierroksittain koko kehän ympäri. Korjaa ensin pyöreys, sitten sivuheitto — alle millin riittää tässä vaiheessa." },
+      { t: "Nosta kireys tavoitteeseen", go: "tab-kireys", g: "Avaa kireysmittaus",
+        b: "Mittaa kaikki pinnat ja tasaa ne oman puolensa keskiarvoon. Nosta koko kehää vasta kun hajonta on alle ± 10 %. Lukemat voi sanella." },
+      { t: "Poista jännitykset ja viimeistele", go: "tab-lopetus", g: "Avaa viimeistelylista",
+        b: "Purista pinnapareja kehän ympäri, rihtaa uudelleen ja toista kunnes mikään ei enää muutu. Tarkista pinnanpäät rengasnauhan alta." },
+      { t: "Jälkitarkastus 50–100 km jälkeen", go: "tab-kireys", g: "Avaa kireysmittaus",
+        b: "Mittaa kireys ja heitot uudelleen. Pieni asettuminen on normaalia; selvä löystyminen kertoo, että jännitykset jäivät purkamatta." }
+    ]},
+    vaihto: { t: "Vanteen tai navan vaihto", d: "Vanha napa uuteen vanteeseen tai toisin päin. Selvitetään ensin, kelpaavatko vanhat pinnat.", steps: [
+      { t: "Kirjaa vanha kiekko ennen purkua", go: "tab-kireys", g: "Avaa kireysmittaus",
+        b: "Kirjoita muistiin pinnojen pituudet, ristiluku ja pinnamalli. Jos haluat vertailukohdan, mittaa kireys nyt — se kertoo, missä kunnossa vanha kiekko oli." },
+      { t: "Mittaa uusi osa", go: "tab-laskuri", g: "Avaa mitat",
+        b: "Uudesta vanteesta ERD, uudesta navasta laippamitat. Tarkista, että reikämäärä on sama kuin vastakappaleessa." },
+      { t: "Käyvätkö vanhat pinnat?", go: "tab-laskuri", g: "Laske pituus",
+        b: "Vertaa laskettua pituutta vanhojen pinnojen pituuteen. Vanhat kelpaavat vain, jos ero on <b>alle 1 mm</b> ja pinnat ovat hyvässä kunnossa. Käytetyt pinnat ovat väsyneet — useimmiten uudet ovat oikea valinta." },
+      { t: "Pikasiirto teipillä (vain vanteen vaihto)",
+        b: "Jos ERD ja reikämäärä ovat samat ja vanhat pinnat käyvät: teippaa uusi vanne vanhan viereen venttiiliaukot kohdakkain ja siirrä pinnat yksi kerrallaan. Säästää koko pinnoituksen — mutta vain kun mitat täsmäävät. Muuten ohita tämä vaihe." },
+      { t: "Pura vanha kiekko",
+        b: "Löysää kaikkia nippoja puoli kierrosta kerrallaan kehän ympäri, kunnes kireys on poissa. Irrota vasta sitten. Yhdestä kohdasta aloitettu irrotus voi vääntää vannetta." },
+      { t: "Pinnoita uudelleen", go: "tab-pinnoitus", g: "Avaa pinnoitusohje",
+        b: "Käy pinnoitusohje läpi alusta. Vanhan navan kanssa pinnojen suunnat kannattaa pitää samoina kuin ennen." },
+      { t: "Rihtaa", go: "tab-rihtaus", g: "Avaa rihtaus", b: "Pyöreys ensin, sitten sivu, lopuksi keskitys." },
+      { t: "Nosta kireys tavoitteeseen", go: "tab-kireys", g: "Avaa kireysmittaus", b: "Mittaa ja tasaa kireys puolittain." },
+      { t: "Viimeistele", go: "tab-lopetus", g: "Avaa viimeistelylista", b: "Jännitysten poisto, uusintarihtaus ja loppumittaus." }
+    ]},
+    rihtaus: { t: "Nykyisen kiekon rihtaus", d: "Kiekko heittää tai on vino. Selvitetään syy ennen kuin kierretään mitään.", steps: [
+      { t: "Tarkista kiekon kunto",
+        b: "Etsi katkenneet ja löysät pinnat, halkeamat nippareikien ympäriltä ja laakerin välys. <b>Halkeama vanteessa tarkoittaa vanteen vaihtoa</b> — rihtaus ei sitä korjaa." },
+      { t: "Mittaa kireys ennen kuin kosket", go: "tab-kireys", g: "Avaa kireysmittaus",
+        b: "Löysät pinnat kertovat usein, miksi kiekko meni vinoon. Mittaa ennen korjaamista, niin tiedät mistä vika lähti." },
+      { t: "Mittaa heitot kehän ympäri", go: "tab-rihtaus", g: "Avaa heittomittaus",
+        b: "Syötä sivu- ja korkeusheitto kehän ympäriltä. Sovellus erottaa keskitysvirheen todellisesta heitosta ja nimeää kierrettävät pinnat." },
+      { t: "Korjaa pyöreys", go: "tab-rihtaus", g: "Avaa korjaussuunnitelma",
+        b: "Korkeusheitto ensin: se vaatii suurimmat kireysmuutokset. Seuraa korjaussuunnitelmaa järjestyksessä." },
+      { t: "Korjaa sivuheitto", go: "tab-rihtaus", g: "Avaa rihtaus",
+        b: "Kiristä ja löysää pareittain, 1/4 kierrosta kerrallaan. Merkitse heittokohdan alku ja loppu teipillä." },
+      { t: "Tarkista keskitys", go: "tab-rihtaus", g: "Avaa rihtaus",
+        b: "Vanteen keskilinjan pitää osua navan päiden puoliväliin. Korjaa koko kehälle tasaisesti." },
+      { t: "Tasaa kireys", go: "tab-kireys", g: "Avaa kireysmittaus",
+        b: "Rihtaus muuttaa kireyksiä. Mittaa uudelleen ja tasaa poikkeamat oman puolensa keskiarvoon." },
+      { t: "Poista jännitykset ja loppumittaus", go: "tab-lopetus", g: "Avaa viimeistelylista",
+        b: "Purista pinnaparit, rihtaa uudelleen ja vertaa mittarajoihin." }
+    ]},
+    pinna: { t: "Katkenneen pinnan vaihto", d: "Yksi pinna on katkennut. Vaihdetaan se ja palautetaan kiekko kuntoon.", steps: [
+      { t: "Paikanna katkennut pinna",
+        b: "Selvitä puoli ja suunta: kulkeeko pinna laipan ulko- vai sisäpuolelta. Vetopuolen pinnat katkeavat useimmiten laipan mutkasta. Merkitse paikka teipillä." },
+      { t: "Selvitä pituus", go: "tab-laskuri", g: "Avaa laskuri",
+        b: "Mittaa ehjä pinna samalta puolelta ja samaan suuntaan, tai laske pituus navan ja vanteen mitoista. Mitta otetaan mutkan sisäreunasta pinnan päähän." },
+      { t: "Irrota mitä tarvitaan",
+        b: "Rengas, sisäkumi tai rengasnauha. Vetopuolen pinnan vaihto vaatii usein rataspakan irrotuksen — joskus pinnan saa pujotettua taivuttamalla." },
+      { t: "Asenna uusi pinna",
+        b: "Ota mallia pinnasta, joka on <b>neljän reiän päässä samalla puolella</b> — sillä on sama kulkureitti. Ristit samoin: yli ja ali samoissa kohdissa kuin mallipinnalla." },
+      { t: "Kiristä naapureiden kireyteen", go: "tab-kireys", g: "Avaa kireysmittaus",
+        b: "Mittaa viereiset saman puolen pinnat ja kiristä uusi samaan lukemaan." },
+      { t: "Rihtaa kohta", go: "tab-rihtaus", g: "Avaa rihtaus",
+        b: "Uusi pinna vetää vannetta. Korjaa kohta ja tarkista koko kehä." },
+      { t: "Arvioi koko kiekko",
+        b: "Yksi katkennut pinna voi olla sattumaa. Jos pinnoja on katkennut useampi, koko pinnoitus on väsynyt — pinnoita kiekko uudelleen, ettei sama toistu viikon päästä." }
+    ]},
+    huolto: { t: "Kireyden tarkistus ja huolto", d: "Kiekko toimii, mutta sen kunto halutaan varmistaa. Kausihuolto tai uuden kiekon jälkitarkastus.", steps: [
+      { t: "Puhdista ja tarkasta",
+        b: "Pese nippapesät ja etsi korroosiota, halkeamia ja löysiä pinnoja. Purista pinnapareja — löysä pinna tuntuu heti." },
+      { t: "Mittaa kaikkien pinnojen kireys", go: "tab-kireys", g: "Avaa kireysmittaus",
+        b: "Mittaa koko kiekko. Sanelulla onnistuu ilman, että mittaria tarvitsee laskea kädestä." },
+      { t: "Mittaa heitot", go: "tab-rihtaus", g: "Avaa heittomittaus",
+        b: "Sivu- ja korkeusheitto kehän ympäriltä." },
+      { t: "Tasaa kireys", go: "tab-kireys", g: "Avaa kireysmittaus",
+        b: "Korjaa yli 10 % poikkeavat pinnat oman puolensa keskiarvoon." },
+      { t: "Poista jännitykset", go: "tab-lopetus", g: "Avaa viimeistelylista",
+        b: "Purista pinnaparit kehän ympäri." },
+      { t: "Tarkista heitot uudelleen", go: "tab-rihtaus", g: "Avaa rihtaus",
+        b: "Vertaa mittarajoihin. Jos kaikki on rajoissa, kiekko on valmis." }
+    ]}
+  };
+  var JOB_ORDER = ["uusi", "vaihto", "rihtaus", "pinna", "huolto"];
+
+  function jobId(){ var j = S.get("kv.job", ""); return JOBS[j] ? j : ""; }
+  function jobDone(j, i){ return S.get("kv.js-" + j + "-" + i, "0") === "1"; }
+  function jobProgress(j){
+    var n = JOBS[j].steps.length, d = 0, cur = -1;
+    for(var i = 0; i < n; i++){ if(jobDone(j, i)) d++; else if(cur < 0) cur = i; }
+    return { n: n, d: d, cur: cur };
+  }
+
+  var jobCloseIdx = -1;
+  function renderJob(){
+    var j = jobId();
+    $("job-choose").hidden = !!j;
+    $("job-run").hidden = !j;
+    if(!j){
+      $("jobgrid").innerHTML = JOB_ORDER.map(function(k){
+        var job = JOBS[k], tools = {};
+        job.steps.forEach(function(st){ if(st.go) tools[TOOLNAME[st.go]] = 1; });
+        return '<button class="jobcard" data-job="' + k + '">' +
+          '<span class="jc-t">' + jicon(k, 22) + job.t + '</span>' +
+          '<span class="jc-d">' + job.d + '</span>' +
+          '<span class="jc-m">' + job.steps.length + ' vaihetta · ' + Object.keys(tools).join(", ") + '</span></button>';
+      }).join("");
+      updateJobChrome();
+      return;
+    }
+    var job = JOBS[j], pr = jobProgress(j);
+    var open = {};
+    var old = $("jsteps").querySelectorAll("details");
+    for(var o = 0; o < old.length; o++) if(old[o].open) open[old[o].getAttribute("data-i")] = 1;
+    if(jobCloseIdx >= 0){ delete open[jobCloseIdx]; jobCloseIdx = -1; }
+    $("job-title").textContent = job.t;
+    $("job-desc").textContent = job.d;
+    $("job-bar").style.width = (pr.d / pr.n * 100) + "%";
+    $("job-count").textContent = pr.d + " / " + pr.n;
+    $("jsteps").innerHTML = job.steps.map(function(st, i){
+      var done = jobDone(j, i), cur = (i === pr.cur);
+      var isOpen = cur || open[i];
+      return '<li class="jstep' + (done ? " done" : "") + (cur ? " cur" : "") + '">' +
+        '<details data-i="' + i + '"' + (isOpen ? " open" : "") + '>' +
+        '<summary>' +
+        '<input type="checkbox" data-jstep="' + i + '"' + (done ? " checked" : "") + ' aria-label="Merkitse tehdyksi: ' + st.t + '">' +
+        '<span class="jn">' + String(i + 1).padStart(2, "0") + '</span>' +
+        '<span class="jt">' + st.t + '</span>' +
+        (cur ? '<span class="jnow">nyt</span>' : '') +
+        (st.go ? '<span class="jtool">' + TOOLNAME[st.go] + '</span>' : '') +
+        '<svg class="chev" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"/></svg>' +
+        '</summary>' +
+        '<div class="jbody"><p>' + st.b + '</p><div class="row">' +
+        (st.go ? '<button class="btn primary" data-go="' + st.go + '">' + st.g + '</button>' : '') +
+        '<button class="btn" data-jdone="' + i + '">' + (done ? "Merkitse tekemättömäksi" : "Merkitse tehdyksi") + '</button>' +
+        '</div></div></details></li>';
+    }).join("");
+    var doneCard = $("job-done");
+    if(pr.d === pr.n){
+      doneCard.hidden = false;
+      doneCard.innerHTML = '<h2>Työ valmis</h2><p class="lede" style="margin-top:4px">Kaikki vaiheet on merkitty tehdyiksi. Kirjaa tärkeimmät lukemat projektin muistiinpanoihin, niin ne löytyvät seuraavalla kerralla.</p>' +
+        '<div class="row"><button class="btn primary" data-go="tab-proj">Avaa muistiinpanot</button><button class="btn" id="job-new">Aloita uusi työ</button></div>';
+    } else {
+      doneCard.hidden = true; doneCard.innerHTML = "";
+    }
+    updateJobChrome();
+  }
+
+  function setStep(i, val){
+    var j = jobId();
+    if(!j) return;
+    S.set("kv.js-" + j + "-" + i, val ? "1" : "0");
+    if(val) jobCloseIdx = i;
+    renderJob();
+    updateTopbar();
+  }
+
+  document.addEventListener("click", function(e){
+    var t = e.target && e.target.closest ? e.target.closest("[data-job],[data-jdone],#job-change,#job-new") : null;
+    if(!t) return;
+    if(t.hasAttribute("data-job")){ S.set("kv.job", t.getAttribute("data-job")); renderJob(); updateTopbar(); window.scrollTo(0, 0); }
+    else if(t.hasAttribute("data-jdone")){ var i = +t.getAttribute("data-jdone"); setStep(i, !jobDone(jobId(), i)); }
+    else { S.set("kv.job", ""); renderJob(); updateTopbar(); window.scrollTo(0, 0); }
+  });
+  document.addEventListener("change", function(e){
+    var t = e.target;
+    if(t && t.hasAttribute && t.hasAttribute("data-jstep")) setStep(+t.getAttribute("data-jstep"), t.checked);
+  });
+
+  function updateJobChrome(){
+    try{
+      var j = jobId(), strip = $("jobstrip");
+      if(!j){
+        $("start-l1").textContent = "Aloita tästä";
+        $("start-l2").textContent = "Valitse mitä teet";
+        strip.hidden = true; strip.innerHTML = "";
+        return;
+      }
+      var job = JOBS[j], pr = jobProgress(j);
+      $("start-l1").textContent = job.t;
+      $("start-l2").textContent = pr.cur < 0 ? "valmis" : ("vaihe " + (pr.cur + 1) + " / " + pr.n);
+      if(currentTab !== "tab-tyo" && pr.cur >= 0){
+        strip.hidden = false;
+        strip.innerHTML = '<span class="eyebrow">Työ</span><span><b>' + job.t + '</b> · vaihe ' + (pr.cur + 1) + ' / ' + pr.n + ': ' + job.steps[pr.cur].t + '</span>' +
+          '<button class="btn" data-go="tab-tyo">Takaisin työhön</button>';
+      } else { strip.hidden = true; strip.innerHTML = ""; }
+    }catch(err){}
+  }
 
   function checked(listId){
     var el = document.getElementById(listId);
@@ -1100,7 +1403,11 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
   function updateTopbar(){
     var id = currentTab, sub = "";
     try{
-      if(id === "tab-laskuri"){
+      if(id === "tab-tyo"){
+        var jj = jobId();
+        if(jj){ var jp = jobProgress(jj); sub = JOBS[jj].t + " · " + jp.d + " / " + jp.n + " vaihetta"; }
+        else sub = "Valitse mitä teet";
+      } else if(id === "tab-laskuri"){
         var v = readVals();
         sub = v.n + " pinnaa · " + (v.xr === v.xl ? v.xr + "-risti" : v.xr + "/" + v.xl + "-risti") + " · ERD " + fmt(v.erd);
       } else if(id === "tab-pinnoitus"){
@@ -1134,11 +1441,12 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
     }
     var more = $("more-btn");
     if(more){
-      if(id === "tab-lopetus" || id === "tab-db" || id === "tab-proj") more.setAttribute("aria-current", "page");
+      if(id === "tab-lopetus" || id === "tab-db" || id === "tab-proj" || id === "tab-pinnoitus") more.setAttribute("aria-current", "page");
       else more.removeAttribute("aria-current");
     }
     closeSheet();
     updateTopbar();
+    updateJobChrome();
   }
 
   function closeSheet(){
@@ -2180,6 +2488,14 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
       if(c2) body.push(c2 + " heittolukemaa");
     }catch(e){}
     if(d["kv.notes"] && d["kv.notes"].trim()) body.push("muistiinpanoja");
+    try{
+      var jk = d["kv.job"];
+      if(jk && JOBS[jk]){
+        var jd = 0;
+        for(var q = 0; q < JOBS[jk].steps.length; q++) if(d["kv.js-" + jk + "-" + q] === "1") jd++;
+        body.unshift(JOBS[jk].t.toLowerCase() + " " + jd + "/" + JOBS[jk].steps.length);
+      }
+    }catch(e){}
     return (head.join(" · ") || "ei mittoja") + (body.length ? " — " + body.join(" · ") : "");
   }
 
@@ -2203,6 +2519,7 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
     analyzeRU();
     renderList($("list-fin"), finItems, "fin", "bar2");
     renderLoaded();
+    renderJob();
   }
 
   var saveTimer = null, statusTimer = null;
@@ -3073,6 +3390,7 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
   compute();
   renderLoaded();
   initProjects();
+  renderJob();
   syncChrome(currentTabId());
 })();
 </script>
