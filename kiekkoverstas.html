@@ -261,6 +261,15 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
 .projbar .psave.on{color:var(--good)}
 .projbar .btn{padding:7px 14px; font-size:12px; border-radius:999px}
 .proj-row.active{border-color:var(--accent); background:var(--accent-soft)}
+.psync{display:inline-flex; align-items:center; gap:5px; font-family:var(--font-m); font-size:11px; color:var(--ink3); white-space:nowrap}
+.psync i{width:7px; height:7px; border-radius:50%; background:var(--good); flex:0 0 auto}
+.psync[data-state="busy"] i{background:var(--warn)}
+.psync[data-state="err"] i{background:var(--crit)}
+.psync[data-state="err"]{color:var(--crit)}
+.sync-steps{margin:12px 0 0; padding-left:20px; font-size:13.5px; color:var(--ink2); line-height:1.55; display:flex; flex-direction:column; gap:6px}
+.sync-steps b{color:var(--ink)}
+.sync-meta{font-family:var(--font-m); font-size:12px; color:var(--ink2); line-height:1.7; margin-top:10px}
+.sync-meta b{color:var(--ink); font-weight:500}
 .proj-row .when{font-family:var(--font-m); font-size:11px; color:var(--ink3)}
 .tm-cell input[type=text], .tm-cell input[type=number]{padding:7px 3px; text-align:center; font-size:13.5px; border-radius:9px}
 /* Voice */
@@ -403,6 +412,7 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
         <span class="pl">Projekti</span>
         <input type="text" id="proj-name" aria-label="Aktiivisen projektin nimi" autocomplete="off">
         <span class="psave" id="proj-status">tallennettu</span>
+        <span class="psync" id="proj-sync" hidden><i></i><span id="proj-sync-t"></span></span>
         <button class="btn" id="proj-open">Vaihda</button>
       </div>
       <button class="proj-mini" id="proj-mini" aria-label="Avaa projektit"><i></i><span id="proj-mini-name">Kiekko 1</span></button>
@@ -1115,8 +1125,13 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
     </div>
 
     <div class="stack">
+      <div class="card" id="sync-card">
+        <h2>Synkronointi GitHubiin</h2>
+        <div id="sync-body"></div>
+      </div>
+
       <div class="card">
-        <h2>Varmuuskopio</h2>
+        <h2>Varmuuskopio tekstinä</h2>
         <p class="lede">Kaikki projektit ja omat komponenttimittaukset yhtenä tekstinä. Kopioi talteen tai siirrä toiseen laitteeseen tai selaimeen.</p>
         <div class="row">
           <button class="btn" id="all-export">Näytä vietävä data</button>
@@ -2195,7 +2210,11 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
       if(raw){ var o = JSON.parse(raw); OWN.r = o.r || []; OWN.h = o.h || []; }
     }catch(e){ OWN = { r: [], h: [] }; }
   })();
-  function saveOwn(){ S.set("kv.own", JSON.stringify(OWN)); }
+  function saveOwn(){
+    S.set("kv.own", JSON.stringify(OWN));
+    S.set("kv.sync.ownmod", String(Date.now()));
+    try{ scheduleSync(); }catch(e){}
+  }
 
   function mkRim(a, own, i){
     return { kind:"rim", id:(own?"or":"r")+i, own:!!own, name:a[0], erd:a[1], osb:a[2]||0, iso:a[3]||"", year:a[4]||0, src:a[5]||"" };
@@ -2662,12 +2681,18 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
   /* ---------- Projektit ---------- */
   var GLOBAL_KEYS = { "kv.own":1, "kv.tab":1, "kv.projects":1, "kv.active":1, "kv.tmview":1, "kv.theme":1, "kv.vspeak":1 };
 
+  function isGlobal(k){ return !!GLOBAL_KEYS[k] || k.indexOf("kv.sync.") === 0; }
+  function canon(o){
+    var out = {};
+    Object.keys(o || {}).sort().forEach(function(k){ out[k] = o[k]; });
+    return JSON.stringify(out);
+  }
   function snapshot(){
     var o = {};
     try{
       for(var i = 0; i < localStorage.length; i++){
         var k = localStorage.key(i);
-        if(k && k.indexOf("kv.") === 0 && !GLOBAL_KEYS[k]) o[k] = localStorage.getItem(k);
+        if(k && k.indexOf("kv.") === 0 && !isGlobal(k)) o[k] = localStorage.getItem(k);
       }
     }catch(e){}
     return o;
@@ -2677,7 +2702,7 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
       var del = [], i;
       for(i = 0; i < localStorage.length; i++){
         var k = localStorage.key(i);
-        if(k && k.indexOf("kv.") === 0 && !GLOBAL_KEYS[k]) del.push(k);
+        if(k && k.indexOf("kv.") === 0 && !isGlobal(k)) del.push(k);
       }
       for(i = 0; i < del.length; i++) localStorage.removeItem(del[i]);
       for(var k2 in data){ if(Object.prototype.hasOwnProperty.call(data, k2)) localStorage.setItem(k2, data[k2]); }
@@ -2692,7 +2717,15 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
     }catch(e){ PROJECTS = []; }
     activeId = S.get("kv.active", null);
   })();
-  function saveProjects(){ S.set("kv.projects", JSON.stringify(PROJECTS)); S.set("kv.active", activeId || ""); }
+  var lastProjJson = null;
+  function saveProjects(){
+    var js = JSON.stringify(PROJECTS);
+    var changed = (js !== lastProjJson);
+    lastProjJson = js;
+    S.set("kv.projects", js);
+    S.set("kv.active", activeId || "");
+    if(changed){ try{ scheduleSync(); }catch(e){} }
+  }
   function pid(){ return "p" + Date.now().toString(36) + Math.floor(Math.random() * 999).toString(36); }
   function activeProj(){
     for(var i = 0; i < PROJECTS.length; i++){ if(PROJECTS[i].id === activeId) return PROJECTS[i]; }
@@ -2782,8 +2815,8 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
   function saveActive(){
     var a = activeProj();
     if(!a) return;
-    a.data = snapshot();
-    a.modified = Date.now();
+    var snap = snapshot();
+    if(canon(snap) !== canon(a.data)){ a.data = snap; a.modified = Date.now(); }
     saveProjects();
     markSaved();
     updateTopbar();
@@ -2855,7 +2888,7 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
       }
       delArmed = null;
       for(var i = 0; i < PROJECTS.length; i++){
-        if(PROJECTS[i].id === id){ PROJECTS.splice(i, 1); break; }
+        if(PROJECTS[i].id === id){ PROJECTS.splice(i, 1); try{ addTomb(id); }catch(e){} break; }
       }
       if(activeId === id){
         if(PROJECTS.length){ activeId = PROJECTS[0].id; restoreKeys(PROJECTS[0].data || {}); reloadState(); $("proj-name").value = PROJECTS[0].name; }
@@ -2939,6 +2972,300 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
     $("proj-status").textContent = ago(a.modified);
     $("proj-notes").value = S.get("kv.notes", "") || "";
     renderProjects();
+  }
+
+
+  /* ---------- Synkronointi: salainen gist GitHub-tilillä ----------
+     Avain ja synkronointitila ovat laitekohtaisia (kv.sync.*), eivätkä ne päädy
+     projekteihin, varmuuskopioon tai gistiin. */
+  var GIST_DESC = "Kiekkoverstas – synkronointi";
+  var GIST_FILE = "kiekkoverstas.json";
+  var syncBusy = false, syncAgain = false, syncTimer = null, syncApplying = false;
+  var syncState = { s: "", msg: "", notes: [] };
+
+  function syncToken(){ return S.get("kv.sync.token", "") || ""; }
+  function deviceName(){
+    var ua = navigator.userAgent || "";
+    var dev = /iPhone/.test(ua) ? "iPhone" : /iPad/.test(ua) ? "iPad" : /Android/.test(ua) ? "Android" : /Mac/.test(ua) ? "Mac" : /Windows/.test(ua) ? "Windows" : "Laite";
+    var br = /Edg\//.test(ua) ? "Edge" : /Firefox\//.test(ua) ? "Firefox" : /CriOS|Chrome\//.test(ua) ? "Chrome" : /Safari\//.test(ua) ? "Safari" : "";
+    return dev + (br ? " " + br : "");
+  }
+  function syncErr(code, msg){ var e = new Error(msg); e.code = code; return e; }
+
+  function gh(method, path, body, keepalive){
+    return fetch("https://api.github.com" + path, {
+      method: method, cache: "no-store", keepalive: !!keepalive,
+      headers: { "Authorization": "Bearer " + syncToken(), "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "Content-Type": "application/json" },
+      body: body ? JSON.stringify(body) : undefined
+    }).then(function(r){
+      if(r.status === 401) throw syncErr("auth", "GitHub ei hyväksynyt avainta. Se on voinut vanhentua — luo uusi avain ja yhdistä uudelleen.");
+      if(r.status === 404) throw syncErr("notfound", "Synkronointigistiä ei löytynyt.");
+      if(r.status === 403) throw syncErr("scope", "Avaimella ei ole gist-oikeutta, tai GitHubin pyyntöraja täyttyi. Tarkista, että avaimessa on gist valittuna.");
+      if(!r.ok) throw syncErr("http", "GitHub vastasi virheellä " + r.status + ".");
+      return r.json().then(function(j){ return { json: j, headers: r.headers }; });
+    }, function(){
+      var here = location.hostname;
+      var hosted = /github\.io$/.test(here) || here === "localhost" || here === "127.0.0.1";
+      throw syncErr("net", hosted
+        ? "GitHubiin ei saatu yhteyttä. Tarkista verkkoyhteys — synkronointi yrittää uudelleen, kun muokkaat jotain tai palaat sovellukseen."
+        : "Tässä osoitteessa synkronointi on estetty. Avaa sovellus osoitteesta jaakkoso.github.io/kiekkoverstas.");
+    });
+  }
+
+  function tombs(){ try{ return JSON.parse(S.get("kv.sync.tomb", "{}")) || {}; }catch(e){ return {}; } }
+  function addTomb(id){ var t = tombs(); t[id] = Date.now(); S.set("kv.sync.tomb", JSON.stringify(t)); }
+
+  function hasWork(p){
+    var d = p.data || {};
+    if(!/^Kiekko \d+$/.test(p.name || "")) return true;
+    for(var k in d){
+      if(!Object.prototype.hasOwnProperty.call(d, k)) continue;
+      if(/^kv\.(lace|fin|js)-/.test(k) && d[k] === "1") return true;
+      if(/^kv\.(job|notes|oldtm)$/.test(k) && d[k]) return true;
+      if(/^kv\.jq-/.test(k) && d[k]) return true;
+      if(k === "kv.tm" || k === "kv.ru"){
+        try{ var o = JSON.parse(d[k]); for(var s2 in o){ if((o[s2] || []).some(function(v){ return v !== null && v !== undefined && v !== ""; })) return true; } }catch(e){}
+      }
+    }
+    return false;
+  }
+
+  function localState(){
+    return { projects: JSON.parse(JSON.stringify(PROJECTS)), deleted: tombs(), own: JSON.parse(JSON.stringify(OWN)),
+             ownModified: +S.get("kv.sync.ownmod", "0") || 0 };
+  }
+
+  function mergeState(Lc, Rm, lastSync, first){
+    var notes = [], deleted = {}, cutoff = Date.now() - 120 * 86400000;
+    [Lc.deleted || {}, (Rm && Rm.deleted) || {}].forEach(function(t){
+      Object.keys(t).forEach(function(id){ if(t[id] > cutoff) deleted[id] = Math.max(deleted[id] || 0, t[id]); });
+    });
+    var remoteProjects = (Rm && Rm.projects) || [];
+    var localProjects = Lc.projects;
+    if(first && remoteProjects.length) localProjects = localProjects.filter(function(p){
+      return hasWork(p) || remoteProjects.some(function(r){ return r.id === p.id; });
+    });
+    var byId = {}, order = [];
+    localProjects.forEach(function(p){ byId[p.id] = { L: p }; order.push(p.id); });
+    remoteProjects.forEach(function(p){ if(!byId[p.id]){ byId[p.id] = {}; order.push(p.id); } byId[p.id].R = p; });
+    var out = [];
+    order.forEach(function(id){
+      var e = byId[id], l = e.L, r = e.R, pick;
+      if(l && r){
+        var same = canon(l.data) === canon(r.data) && l.name === r.name;
+        pick = (l.modified || 0) >= (r.modified || 0) ? l : r;
+        if(!same && lastSync && (l.modified || 0) > lastSync && (r.modified || 0) > lastSync){
+          var lose = pick === l ? r : l;
+          var cp = JSON.parse(JSON.stringify(lose));
+          cp.id = lose.id + "-" + Date.now().toString(36).slice(-5);
+          cp.name = (lose.name || "Nimetön") + " (" + (lose === l ? deviceName() : ((Rm && Rm.device) || "toinen laite")) + ")";
+          out.push(cp);
+          notes.push("Projektia ”" + (pick.name || "Nimetön") + "” muokattiin kahdella laitteella. Uudempi versio jäi voimaan, ja toinen tallennettiin nimellä ”" + cp.name + "”.");
+        }
+      } else pick = l || r;
+      if(deleted[id] && deleted[id] >= (pick.modified || 0)) return;
+      out.push(pick);
+    });
+    out.sort(function(a, b){ return (b.modified || 0) - (a.modified || 0); });
+
+    var own = Lc.own, ownMod = Lc.ownModified || 0;
+    if(Rm && Rm.own){
+      var rMod = Rm.ownModified || 0;
+      var bothChanged = lastSync && ownMod > lastSync && rMod > lastSync;
+      if(bothChanged){
+        var uniq = function(a){ var seen = {}; return a.filter(function(x){ var k = JSON.stringify(x); if(seen[k]) return false; seen[k] = 1; return true; }); };
+        own = { r: uniq((Lc.own.r || []).concat(Rm.own.r || [])), h: uniq((Lc.own.h || []).concat(Rm.own.h || [])) };
+        ownMod = Math.max(ownMod, rMod);
+      } else if(rMod > ownMod){ own = Rm.own; ownMod = rMod; }
+    }
+    return { projects: out, deleted: deleted, own: own, ownModified: ownMod, notes: notes };
+  }
+
+  function applyMerged(m){
+    syncApplying = true;
+    try{
+      var liveBefore = canon(snapshot());
+      PROJECTS = m.projects;
+      if(!activeProj()) activeId = PROJECTS.length ? PROJECTS[0].id : null;
+      if(!PROJECTS.length){
+        var pr = { id: pid(), name: "Kiekko 1", created: Date.now(), modified: Date.now(), data: snapshot() };
+        PROJECTS.push(pr); activeId = pr.id;
+      }
+      S.set("kv.sync.tomb", JSON.stringify(m.deleted));
+      OWN.r = (m.own && m.own.r) || []; OWN.h = (m.own && m.own.h) || [];
+      S.set("kv.own", JSON.stringify(OWN));
+      S.set("kv.sync.ownmod", String(m.ownModified || 0));
+      lastProjJson = JSON.stringify(PROJECTS);
+      S.set("kv.projects", lastProjJson);
+      S.set("kv.active", activeId || "");
+      var a = activeProj();
+      if(a && canon(a.data) !== liveBefore){
+        restoreKeys(a.data || {});
+        reloadState();
+      }
+      if(a) $("proj-name").value = a.name;
+      renderOwn(); runSearch2(); renderProjects(); updateTopbar();
+    } finally { syncApplying = false; }
+  }
+
+  function findGist(){
+    var page = 1;
+    function next(){
+      return gh("GET", "/gists?per_page=100&page=" + page).then(function(res){
+        var hit = null;
+        (res.json || []).forEach(function(g){ if(!hit && g.description === GIST_DESC && g.files && g.files[GIST_FILE]) hit = g.id; });
+        if(hit || !res.json || res.json.length < 100 || page >= 5) return hit;
+        page++; return next();
+      });
+    }
+    return next();
+  }
+  function readGist(id){
+    return gh("GET", "/gists/" + id).then(function(res){
+      var f = res.json.files && res.json.files[GIST_FILE];
+      if(!f) return null;
+      var getText = f.truncated ? fetch(f.raw_url, { cache: "no-store" }).then(function(r){ return r.text(); }) : Promise.resolve(f.content);
+      return getText.then(function(t){
+        try{ var o = JSON.parse(t); return (o && o.app === "kiekkoverstas") ? o : null; }catch(e){ return null; }
+      });
+    });
+  }
+  function payload(m){
+    return JSON.stringify({ app: "kiekkoverstas", v: 1, updated: Date.now(), device: deviceName(),
+      projects: m.projects, deleted: m.deleted, own: m.own, ownModified: m.ownModified });
+  }
+
+  function syncNow(){
+    if(!syncToken()) return Promise.resolve();
+    if(syncBusy){ syncAgain = true; return Promise.resolve(); }
+    syncBusy = true;
+    if(syncTimer){ clearTimeout(syncTimer); syncTimer = null; }
+    setSyncState("busy");
+    try{ saveActive(); }catch(e){}
+    var lastSync = +S.get("kv.sync.last", "0") || 0, first = !lastSync, gid = S.get("kv.sync.gist", "");
+    var attempt = function(retried){
+      var idP = gid ? Promise.resolve(gid) : findGist();
+      return idP.then(function(id){
+        if(!id){
+          var m0 = mergeState(localState(), null, 0, first);
+          return gh("POST", "/gists", { description: GIST_DESC, public: false, files: { "kiekkoverstas.json": { content: payload(m0) } } })
+            .then(function(res){ S.set("kv.sync.gist", res.json.id); gid = res.json.id; return m0; });
+        }
+        S.set("kv.sync.gist", id); gid = id;
+        return readGist(id).then(function(remote){
+          var m = mergeState(localState(), remote, lastSync, first);
+          applyMerged(m);
+          var body = payload(m);
+          return gh("PATCH", "/gists/" + id, { files: { "kiekkoverstas.json": { content: body } } }, document.visibilityState === "hidden" && body.length < 60000)
+            .then(function(){ return m; });
+        });
+      }).catch(function(err){
+        if(err.code === "notfound" && !retried){ S.set("kv.sync.gist", ""); gid = ""; return attempt(true); }
+        throw err;
+      });
+    };
+    return attempt(false).then(function(m){
+      S.set("kv.sync.last", String(Date.now()));
+      setSyncState("ok", "", (m && m.notes) || []);
+    }, function(err){
+      setSyncState("err", err.message || "Synkronointi epäonnistui.");
+    }).then(function(){
+      syncBusy = false;
+      if(syncAgain){ syncAgain = false; scheduleSync(1500); }
+    });
+  }
+
+  function scheduleSync(delay){
+    if(!syncToken() || syncApplying) return;
+    if(syncTimer) clearTimeout(syncTimer);
+    syncTimer = setTimeout(syncNow, delay || 4000);
+  }
+
+  document.addEventListener("visibilitychange", function(){
+    if(!syncToken()) return;
+    if(document.visibilityState === "hidden"){ if(syncTimer){ clearTimeout(syncTimer); syncTimer = null; syncNow(); } }
+    else if(Date.now() - (+S.get("kv.sync.last", "0") || 0) > 15000) syncNow();
+  });
+
+  function setSyncState(s, msg, notes){
+    syncState.s = s; syncState.msg = msg || "";
+    if(notes && notes.length) syncState.notes = notes;
+    var el = $("proj-sync"), t = $("proj-sync-t"), connected = !!syncToken();
+    el.hidden = !connected;
+    el.setAttribute("data-state", s);
+    t.textContent = s === "busy" ? "synkronoi…" : s === "err" ? "ei synkronoitu" : "synkronoitu";
+    el.title = s === "err" ? syncState.msg : "";
+    var dot = document.querySelector(".proj-mini i");
+    if(dot) dot.style.background = !connected ? "var(--ink3)" : s === "err" ? "var(--crit)" : s === "busy" ? "var(--warn)" : "var(--good)";
+    renderSyncCard();
+  }
+
+  function renderSyncCard(){
+    var body = $("sync-body");
+    if(!body) return;
+    var tok = syncToken(), last = +S.get("kv.sync.last", "0") || 0, gid = S.get("kv.sync.gist", ""), login = S.get("kv.sync.login", "");
+    if(!tok){
+      body.innerHTML =
+        '<p class="lede" style="margin-top:4px">Kun synkronointi on päällä, projektit ja omat mittaukset tallentuvat GitHub-tilillesi ja ovat samat jokaisessa selaimessa ja laitteessa. Yhdistäminen tehdään kerran jokaisessa selaimessa.</p>' +
+        '<ol class="sync-steps">' +
+        '<li>Avaa <a href="https://github.com/settings/tokens/new?scopes=gist&amp;description=Kiekkoverstas" target="_blank" rel="noopener">GitHubin avainsivu</a>. Valmiiksi valittuna on <b>vain gist-oikeus</b> — älä valitse muita.</li>' +
+        '<li>Valitse voimassaoloaika ja paina <b>Generate token</b>.</li>' +
+        '<li>Kopioi avain (alkaa <b>ghp_</b>) ja liitä se tähän.</li></ol>' +
+        '<div class="f" style="margin-top:14px"><label for="sync-token">GitHub-avain</label>' +
+        '<input type="password" id="sync-token" autocomplete="off" spellcheck="false" placeholder="ghp_…"></div>' +
+        '<div class="row"><button class="btn primary" id="sync-connect">Yhdistä</button></div>' +
+        (syncState.s === "err" && syncState.msg ? '<div class="notes"><div class="note crit"><span>' + syncState.msg + '</span></div></div>' : '') +
+        '<div class="notes">' +
+        '<div class="note info"><span>Avain tallentuu vain tämän selaimen muistiin ja lähtee ainoastaan GitHubille. Se ei päädy projekteihin, varmuuskopioon eikä gistiin.</span></div>' +
+        '<div class="note info"><span>Tiedot tallentuvat <b>salaiseen gistiin</b>: se ei näy hauissa eikä profiilissasi, mutta kuka tahansa gistin osoitteen tietävä voi lukea sen.</span></div>' +
+        '</div>';
+      return;
+    }
+    var st = syncState.s === "busy" ? "synkronoi parhaillaan…" : syncState.s === "err" ? "ei synkronoitu" : (last ? "synkronoitu " + ago(last) : "ei vielä synkronoitu");
+    body.innerHTML =
+      '<div class="sync-meta">' +
+      (login ? 'Tili: <b>' + login + '</b><br>' : '') +
+      'Tämä laite: <b>' + deviceName() + '</b><br>' +
+      'Tila: <b>' + st + '</b>' +
+      (gid ? '<br><a href="https://gist.github.com/' + gid + '" target="_blank" rel="noopener">Avaa gist GitHubissa</a>' : '') +
+      '</div>' +
+      (syncState.s === "err" && syncState.msg ? '<div class="notes"><div class="note crit"><span>' + syncState.msg + '</span></div></div>' : '') +
+      (syncState.notes.length ? '<div class="notes">' + syncState.notes.map(function(n){ return '<div class="note warn"><span>' + n + '</span></div>'; }).join("") + '</div>' : '') +
+      '<div class="row"><button class="btn primary" id="sync-now">Synkronoi nyt</button><button class="btn" id="sync-off">Katkaise yhteys tältä laitteelta</button></div>' +
+      '<div class="notes"><div class="note info"><span>Synkronointi tapahtuu itsestään muutama sekunti jokaisen muutoksen jälkeen ja aina, kun palaat sovellukseen. iPhonessa kannattaa lisätä sovellus Koti-valikkoon (Jaa → Lisää Koti-valikkoon), jotta Safari ei unohda avainta viikon tauon jälkeen.</span></div></div>';
+  }
+
+  document.addEventListener("click", function(e){
+    var t = e.target && e.target.closest ? e.target.closest("#sync-connect,#sync-now,#sync-off") : null;
+    if(!t) return;
+    if(t.id === "sync-now"){ syncNow(); return; }
+    if(t.id === "sync-off"){
+      ["kv.sync.token", "kv.sync.gist", "kv.sync.last", "kv.sync.login"].forEach(function(k){ try{ localStorage.removeItem(k); }catch(err){} });
+      syncState = { s: "", msg: "", notes: [] };
+      setSyncState("");
+      return;
+    }
+    var inp = $("sync-token"), tok = inp ? inp.value.trim() : "";
+    if(!tok){ syncState.s = "err"; syncState.msg = "Liitä ensin avain kenttään."; renderSyncCard(); return; }
+    S.set("kv.sync.token", tok);
+    setSyncState("busy");
+    gh("GET", "/user").then(function(res){
+      var scopes = res.headers.get("x-oauth-scopes");
+      if(scopes !== null && scopes.indexOf("gist") < 0) throw syncErr("scope", "Avaimella ei ole gist-oikeutta. Luo uusi avain linkin kautta — gist on siinä valmiiksi valittuna.");
+      S.set("kv.sync.login", res.json.login || "");
+      S.set("kv.sync.last", "");
+      return syncNow();
+    }).catch(function(err){
+      try{ localStorage.removeItem("kv.sync.token"); }catch(e2){}
+      setSyncState("err", err.message || "Yhdistäminen epäonnistui.");
+    });
+  });
+
+  function initSync(){
+    lastProjJson = JSON.stringify(PROJECTS);
+    try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+    setSyncState(syncToken() ? "ok" : "");
+    if(syncToken()) setTimeout(syncNow, 600);
   }
 
   /* ---------- Heittomittaus ---------- */
@@ -3637,6 +3964,7 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
   renderLoaded();
   initProjects();
   renderJob();
+  initSync();
   syncChrome(currentTabId());
 })();
 </script>

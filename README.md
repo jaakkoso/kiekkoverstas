@@ -36,13 +36,34 @@ Epäsymmetrinen vanne siirtää tehollisia laippaetäisyyksiä (`f ± offset`).
 Puolten kireyssuhde tulee sivuttaisvoimien tasapainosta:
 `T_vasen / T_oikea ≈ (f_oikea / L_oikea) / (f_vasen / L_vasen)`.
 
-### Tallennus
+### Tallennus ja synkronointi
 
 Kaikki tila elää selaimen `localStorage`-muistissa avaimilla, jotka alkavat
 `kv.`. Projektinvaihto kopioi avaimet projektin omaan lokeroon ja takaisin.
-Globaaleja (projektien ulkopuolisia) avaimia ovat `kv.own`, `kv.tab`,
-`kv.projects`, `kv.active` ja `kv.tmview`. Tiedot eivät siirry laitteelta
-toiselle — käytä Projektit-välilehden varmuuskopiota.
+Laitekohtaisia (projektien ulkopuolisia) avaimia ovat `kv.own`, `kv.tab`,
+`kv.projects`, `kv.active`, `kv.tmview`, `kv.theme`, `kv.vspeak` sekä kaikki
+`kv.sync.*`-avaimet.
+
+Ilman synkronointia tiedot ovat vain siinä selaimessa, jolla niitä käytettiin.
+
+**Synkronointi GitHubiin** (Projektit → Synkronointi GitHubiin) tallentaa
+projektit ja omat komponenttimittaukset salaiseen gistiin käyttäjän
+GitHub-tilille. Jokaiseen selaimeen liitetään kerran GitHub-avain, jolla on
+pelkkä `gist`-oikeus. Avain pysyy selaimen muistissa (`kv.sync.token`) eikä
+koskaan päädy projekteihin, varmuuskopioon tai gistiin.
+
+- Synkronointi käynnistyy muutama sekunti muutoksen jälkeen, sovellukseen
+  palatessa ja sovellusta suljettaessa.
+- Yhdistäminen tehdään projekteittain muokkausajan mukaan. Jos samaa
+  projektia on muokattu kahdella laitteella edellisen synkronoinnin jälkeen,
+  uudempi jää voimaan ja toinen tallennetaan kopiona laitteen nimellä —
+  mitään ei hävitetä.
+- Poistetut projektit merkitään hautakivellä, jotta ne eivät palaa toiselta
+  laitteelta.
+- Salainen gist ei näy hauissa eikä profiilissa, mutta sen osoitteen
+  tietävä voi lukea sen.
+- claude.ai-artifactissa synkronointi on estetty; se toimii GitHub Pages
+  -osoitteessa.
 
 ## Kansion rakenne
 
