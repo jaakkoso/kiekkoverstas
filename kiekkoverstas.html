@@ -319,7 +319,18 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
 .jobstrip{display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 35%, transparent); border-radius:12px; padding:9px 10px 9px 14px; margin-bottom:16px; font-size:13px; color:var(--ink2)}
 .jobstrip b{color:var(--ink); font-weight:600}
 .jobstrip .btn{margin-left:auto; padding:6px 12px; font-size:12px}
-@media (max-width:620px){ .jbody{padding-left:16px} .jstep .jtool{display:none} }
+.jstep .jq-badge{width:19px; height:19px; border-radius:50%; border:1.5px solid var(--accent); color:var(--accent); font:600 11px/1 var(--font-m); display:flex; align-items:center; justify-content:center; flex:0 0 auto}
+.jstep.done .jq-badge{background:var(--accent); color:var(--on-accent)}
+.jstep.done.q .jt{text-decoration:none}
+.jstep .jans{font-family:var(--font-m); font-size:10.5px; color:var(--ink2); background:var(--surface2); border:1px solid var(--line); border-radius:999px; padding:2px 9px; white-space:nowrap; max-width:38%; overflow:hidden; text-overflow:ellipsis; flex:0 1 auto}
+.jask{border:0; margin:0; padding:0; display:flex; flex-direction:column; gap:7px}
+.jask label{display:flex; align-items:flex-start; gap:10px; border:1px solid var(--line); border-radius:11px; padding:11px 13px; cursor:pointer; font-size:13.5px; background:var(--surface2); color:var(--ink)}
+.jask label:has(input:checked){border-color:var(--accent); background:var(--accent-soft)}
+.jask input{margin:2px 0 0; accent-color:var(--accent); width:17px; height:17px; flex:0 0 auto}
+.jpending{list-style:none; font-family:var(--font-m); font-size:12px; color:var(--ink3); padding:6px 16px}
+.oldstat{font-family:var(--font-m); font-size:12px; color:var(--ink2); line-height:1.5}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+@media (max-width:620px){ .jbody{padding-left:16px} .jstep .jtool{display:none} .jstep .jans{display:none} }
 
 /* Phone */
 @media (max-width:900px){
@@ -922,6 +933,22 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
     </div>
   </div>
 
+  <div class="card" id="old-card" hidden>
+    <div class="row" style="margin-top:0; justify-content:space-between; align-items:flex-start">
+      <div style="min-width:0">
+        <h2>Vanhat kireydet</h2>
+        <p class="lede" id="old-lede"></p>
+      </div>
+      <button class="btn" id="old-clear">Poista vanhat kireydet</button>
+    </div>
+    <div class="res" id="old-res" style="margin-top:14px"></div>
+    <div class="notes" id="old-notes"></div>
+    <div class="tm-sides" style="margin-top:12px">
+      <div class="diagram"><svg id="old-r" viewBox="0 0 320 330" role="img" aria-label="Vanhan kiekon vetopuolen kireydet"></svg></div>
+      <div class="diagram"><svg id="old-l" viewBox="0 0 320 330" role="img" aria-label="Vanhan kiekon vapaapuolen kireydet"></svg></div>
+    </div>
+  </div>
+
   <div class="cols">
     <div class="card">
       <h2>Korjausohjeet</h2>
@@ -1188,10 +1215,16 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
   var currentTab = "tab-laskuri";
 
 
-  /* ---------- Työt: opastetut työnkulut ---------- */
+  /* ---------- Työt: opastetut työnkulut ----------
+     Vaihe: { t, b, go, g }        tavallinen vaihe, merkitään tehdyksi
+            { ask, opts, notes }   kysymys; vastaus merkitsee vaiheen tehdyksi
+            { when: [avain, arvo] } näkyy vain kun kysymykseen on vastattu näin
+            { bIf: { key, map } }   vastauksen mukainen lisäohje
+            { act: "saveold" }      tallentaa nykyiset kireyslukemat vanhoiksi */
   var JICON = {
     uusi: '<circle cx="10" cy="10" r="7.5"/><circle cx="10" cy="10" r="2"/><path d="M10 2.5v5.5M10 12v5.5M2.5 10H8M12 10h5.5"/>',
-    vaihto: '<path d="M3.5 7h12l-3-3"/><path d="M16.5 13h-12l3 3"/>',
+    vanne: '<path d="M3.5 7h12l-3-3"/><path d="M16.5 13h-12l3 3"/>',
+    napa: '<rect x="6.5" y="4" width="7" height="12" rx="2"/><path d="M3 7h3.5M3 13h3.5M13.5 7H17M13.5 13H17"/>',
     rihtaus: '<path d="M2 10c2.5-7 5 7 8 0s5-6 8 1"/><path d="M2 16.5h16"/>',
     pinna: '<path d="M3.5 16.5L8.5 11.5"/><path d="M11.5 8.5l5-5"/><path d="M8 8l4 4"/>',
     huolto: '<path d="M3 15a7.5 7.5 0 1 1 14 0"/><path d="M10 15l4-5.5"/><circle cx="10" cy="15" r="1.4"/>'
@@ -1220,22 +1253,79 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
       { t: "Jälkitarkastus 50–100 km jälkeen", go: "tab-kireys", g: "Avaa kireysmittaus",
         b: "Mittaa kireys ja heitot uudelleen. Pieni asettuminen on normaalia; selvä löystyminen kertoo, että jännitykset jäivät purkamatta." }
     ]},
-    vaihto: { t: "Vanteen tai navan vaihto", d: "Vanha napa uuteen vanteeseen tai toisin päin. Selvitetään ensin, kelpaavatko vanhat pinnat.", steps: [
-      { t: "Kirjaa vanha kiekko ennen purkua", go: "tab-kireys", g: "Avaa kireysmittaus",
-        b: "Kirjoita muistiin pinnojen pituudet, ristiluku ja pinnamalli. Jos haluat vertailukohdan, mittaa kireys nyt — se kertoo, missä kunnossa vanha kiekko oli." },
-      { t: "Mittaa uusi osa", go: "tab-laskuri", g: "Avaa mitat",
-        b: "Uudesta vanteesta ERD, uudesta navasta laippamitat. Tarkista, että reikämäärä on sama kuin vastakappaleessa." },
-      { t: "Käyvätkö vanhat pinnat?", go: "tab-laskuri", g: "Laske pituus",
-        b: "Vertaa laskettua pituutta vanhojen pinnojen pituuteen. Vanhat kelpaavat vain, jos ero on <b>alle 1 mm</b> ja pinnat ovat hyvässä kunnossa. Käytetyt pinnat ovat väsyneet — useimmiten uudet ovat oikea valinta." },
-      { t: "Pikasiirto teipillä (vain vanteen vaihto)",
-        b: "Jos ERD ja reikämäärä ovat samat ja vanhat pinnat käyvät: teippaa uusi vanne vanhan viereen venttiiliaukot kohdakkain ja siirrä pinnat yksi kerrallaan. Säästää koko pinnoituksen — mutta vain kun mitat täsmäävät. Muuten ohita tämä vaihe." },
-      { t: "Pura vanha kiekko",
-        b: "Löysää kaikkia nippoja puoli kierrosta kerrallaan kehän ympäri, kunnes kireys on poissa. Irrota vasta sitten. Yhdestä kohdasta aloitettu irrotus voi vääntää vannetta." },
-      { t: "Pinnoita uudelleen", go: "tab-pinnoitus", g: "Avaa pinnoitusohje",
+    vanne: { t: "Vanteen vaihto", d: "Vanha napa ja pinnat uuteen vanteeseen. Jos mitat täsmäävät, pinnat siirretään teipin avulla suoraan vanhasta vanteesta uuteen.", steps: [
+      { id: "kunto", ask: "damage", t: "Onko vanha vanne vaurioitunut ja rihdattu?",
+        b: "Kolhiintunut vanne suoristetaan usein kiristämällä ja löysäämällä pinnoja kolhun kohdalta. Silloin kiekon kireydet eivät ole enää tasaiset eivätkä vastaa alkuperäisiä — ja vanteen jäykkyys on voinut muuttua. Vastaus ratkaisee, miten vanhoja kireyksiä voi käyttää uuden vanteen kanssa.",
+        opts: [["no", "Ei — vanne on ollut ehjä"], ["yes", "Kyllä — kolhu on korjattu rihtaamalla"], ["unk", "En tiedä"]],
+        notes: {
+          no: "Vanhat kireydet ovat luotettava vertailukohta: uuden kiekon puolikohtaiset keskiarvot voi tavoitella samoiksi.",
+          yes: "Vanhoista kireyksistä käytetään vain puolien keskiarvoja, ja nekin suuntaa-antavina. Yksittäisten pinnojen lukemat kertovat kolhun paikan, eivät oikeaa kireyttä.",
+          unk: "Mittaa kireydet seuraavassa vaiheessa. Jos poikkeamat kasautuvat yhteen kohtaan kehää, vanne on todennäköisesti ollut kolhiintunut — sovellus tunnistaa kasautuman ja kertoo siitä." } },
+      { id: "vanhat", act: "saveold", t: "Mittaa ja tallenna vanhat kireydet", go: "tab-kireys", g: "Avaa kireysmittaus",
+        b: "Mittaa kaikki pinnat <b>ennen kuin löysäät yhtäkään nippaa</b>. Kun lukemat ovat ruudukossa, tallenna ne vanhoiksi kireyksiksi — ne säilyvät projektissa erillään, vaikka mittaat uuden kiekon samaan ruudukkoon.",
+        bIf: { key: "damage", map: {
+          yes: "Katso kiekkonäkymästä, mihin kohtaan kehää poikkeamat kasautuvat, ja kirjaa se muistiinpanoihin. Se on kolhun paikka.",
+          unk: "Katso kiekkonäkymää: yhteen kohtaan kasautuvat poikkeamat kertovat korjatusta kolhusta. Voit palata muuttamaan vastausta ensimmäiseen kysymykseen." } } },
+      { id: "mitat", ask: "same", t: "Onko uusi vanne mitoiltaan sama?", go: "tab-laskuri", g: "Mittaa uuden vanteen ERD",
+        b: "Mittaa uuden vanteen ERD ja vertaa vanhaan. Teippimenetelmä toimii vain, jos <b>ERD on sama ± 1 mm</b>, <b>reikämäärä on sama</b> ja offset on sama. Myös pinnareikien porauksen on kuljettava samaan suuntaan: katso, kumpaan suuntaan venttiiliaukon viereinen reikä on siirretty.",
+        opts: [["yes", "Sama ERD ja reikämäärä — siirretään pinnat teipin avulla"], ["no", "Mitat eroavat — pinnoitetaan uudelleen"]],
+        notes: {
+          yes: "Vanhat pinnat ja nipat siirtyvät suoraan uuteen vanteeseen. Pinnoitusta ei tarvitse tehdä alusta, eikä pinnoja tarvitse tilata.",
+          no: "Laske uudet pinnanpituudet. Vanhat pinnat kelpaavat vain, jos laskettu pituus poikkeaa alle 1 mm — ja käytetyt pinnat ovat väsyneet, joten uudet ovat yleensä oikea valinta." } },
+
+      { id: "t-valm", when: ["same", "yes"], t: "Valmistele kiekko",
+        b: "Irrota rengas, sisäkumi ja vannenauha. Tarkista nipat: alumiininipat ja hapettuneet messinkinipat kannattaa vaihtaa nyt, kun jokainen nippa käy joka tapauksessa irti. Voitele kierteet." },
+      { id: "t-loys", when: ["same", "yes"], t: "Poista jännitys tasaisesti",
+        b: "Kierrä jokaista nippaa kierros kerrallaan kehän ympäri, kunnes pinnat ovat löysät. <b>Älä irrota vielä yhtään nippaa.</b> Tasainen löysäys estää vannetta vääntymästä ja pitää pinnat paikallaan." },
+      { id: "t-teippi", when: ["same", "yes"], t: "Teippaa uusi vanne vanhan päälle",
+        b: "Aseta kiekko vaakatasoon pöydälle ja uusi vanne sen päälle <b>venttiiliaukot kohdakkain</b>. Tarkista venttiilin viereisistä rei'istä, että poraus kulkee samaan suuntaan kummassakin vanteessa. Jos poraus on peilikuva ja vanne on symmetrinen, käännä uusi vanne toisin päin. Teippaa vanteet yhteen 4–6 kohdasta.",
+        bIf: { key: "damage", map: {
+          yes: "Kolhiintunut vanne ei välttämättä asetu tasan uuden päälle. Teippaa kolhun molemmin puolin tiiviisti, niin reiät pysyvät kohdakkain." } } },
+      { id: "t-siirto", when: ["same", "yes"], t: "Siirrä pinnat yksi kerrallaan",
+        b: "Kierrä nippa irti vanhasta vanteesta, vie pinna uuden vanteen <b>vastaavaan reikään</b> ja kierrä nippaa 3–4 kierrosta. Etene aina samaan suuntaan kehää pitkin äläkä ohita reikiä. Jos pinna ei yllä, jätä se ja palaa siihen, kun viereiset pinnat ovat paikallaan." },
+      { id: "t-irrota", when: ["same", "yes"], t: "Irrota vanha vanne",
+        b: "Kun jokainen pinna on uudessa vanteessa, leikkaa teipit ja nosta vanha vanne pois navan akselin yli. Tarkista, että jokainen pinna on oman puolensa reiässä ja ristit kulkevat kuten ennen." },
+      { id: "t-tasaa", when: ["same", "yes"], t: "Kierrä nipat samaan syvyyteen",
+        b: "Kierrä kaikki nipat niin, että pinnan kierteet juuri peittyvät. <b>Älä yritä säilyttää vanhoja nippasyvyyksiä</b> — uusi vanne aloittaa puhtaalta pöydältä.",
+        bIf: { key: "damage", map: {
+          yes: "Tämä on erityisen tärkeää: kolhun kohdalla nipat olivat eri syvyydellä kompensoinnin takia, eikä sillä ole uudessa vanteessa merkitystä.",
+          unk: "Jos vanhoissa kireyksissä oli kasautuma, kolhun kohdan nipat ovat eri syvyydellä kuin muut. Tasaa ne muiden mukaan." } } },
+
+      { id: "u-laske", when: ["same", "no"], t: "Laske uudet pinnanpituudet", go: "tab-laskuri", g: "Avaa laskuri",
+        b: "Syötä uuden vanteen ERD ja navan mitat. Tilaa pinnat, jos vanhat eivät käy, ja 2–4 varapinnaa kumpaakin pituutta." },
+      { id: "u-pura", when: ["same", "no"], t: "Pura vanha kiekko",
+        b: "Löysää kaikkia nippoja puoli kierrosta kerrallaan kehän ympäri, kunnes kireys on poissa. Irrota vasta sitten — yhdestä kohdasta aloitettu irrotus voi vääntää vannetta." },
+      { id: "u-pinnoita", when: ["same", "no"], t: "Pinnoita uusi vanne", go: "tab-pinnoitus", g: "Avaa pinnoitusohje",
         b: "Käy pinnoitusohje läpi alusta. Vanhan navan kanssa pinnojen suunnat kannattaa pitää samoina kuin ennen." },
-      { t: "Rihtaa", go: "tab-rihtaus", g: "Avaa rihtaus", b: "Pyöreys ensin, sitten sivu, lopuksi keskitys." },
-      { t: "Nosta kireys tavoitteeseen", go: "tab-kireys", g: "Avaa kireysmittaus", b: "Mittaa ja tasaa kireys puolittain." },
-      { t: "Viimeistele", go: "tab-lopetus", g: "Avaa viimeistelylista", b: "Jännitysten poisto, uusintarihtaus ja loppumittaus." }
+
+      { id: "rihtaa", t: "Kiristä ja rihtaa", go: "tab-rihtaus", g: "Avaa rihtaus",
+        b: "Nosta kireyttä kierroksittain koko kehän ympäri. Korjaa ensin pyöreys, sitten sivuheitto, lopuksi keskitys." },
+      { id: "kireys", t: "Nosta kireys ja vertaa vanhaan", go: "tab-kireys", g: "Avaa kireysmittaus",
+        b: "Mittaa uuden kiekon kireydet. Jos tallensit vanhat kireydet, Kireys-näkymä näyttää ne vertailuna uusien rinnalla.",
+        bIf: { key: "damage", map: {
+          no: "Tavoittele samoja puolikohtaisia keskiarvoja kuin vanhassa kiekossa — niillä kiekko toimi.",
+          yes: "Älä tavoittele vanhoja yksittäisiä lukemia. Käytä tavoitteena laskettua kireyttä ja tasaista jakaumaa; vanhoista vain puolien keskiarvot suuntaa-antavina.",
+          unk: "Jos vanhoissa lukemissa oli kasautuma, toimi kuten vaurioituneen vanteen kanssa: tavoitteena laskettu kireys ja tasainen jakauma." } } },
+      { id: "viim", t: "Viimeistele", go: "tab-lopetus", g: "Avaa viimeistelylista",
+        b: "Jännitysten poisto, uusintarihtaus ja loppumittaus." }
+    ]},
+    napa: { t: "Navan vaihto", d: "Vanha vanne uuteen napaan. Pinnanpituudet muuttuvat lähes aina, koska laippamitat eroavat.", steps: [
+      { id: "vanhat", act: "saveold", t: "Mittaa ja tallenna vanhat kireydet", go: "tab-kireys", g: "Avaa kireysmittaus",
+        b: "Mittaa kaikki pinnat ennen purkua ja tallenna ne vanhoiksi kireyksiksi. Ne kertovat, missä kunnossa vanne ja pinnoitus olivat." },
+      { id: "mittaa", t: "Mittaa uusi napa", go: "tab-laskuri", g: "Avaa mitat",
+        b: "Laippojen halkaisijat ja keskiöetäisyydet — tai hae napa tietokannasta. Tarkista, että reikämäärä on sama kuin vanteessa." },
+      { id: "laske", t: "Laske pinnanpituudet", go: "tab-laskuri", g: "Avaa laskuri",
+        b: "Navan vaihto muuttaa lähes aina pituuksia. Vanhat pinnat käyvät vain, jos ero on alle 1 mm." },
+      { id: "pura", t: "Pura vanha kiekko",
+        b: "Löysää kaikkia nippoja puoli kierrosta kerrallaan kehän ympäri, kunnes kireys on poissa. Irrota vasta sitten." },
+      { id: "pinnoita", t: "Pinnoita", go: "tab-pinnoitus", g: "Avaa pinnoitusohje",
+        b: "Käy pinnoitusohje läpi alusta." },
+      { id: "rihtaa", t: "Kiristä ja rihtaa", go: "tab-rihtaus", g: "Avaa rihtaus",
+        b: "Pyöreys ensin, sitten sivu, lopuksi keskitys." },
+      { id: "kireys", t: "Nosta kireys tavoitteeseen", go: "tab-kireys", g: "Avaa kireysmittaus",
+        b: "<b>Uusi napa muuttaa puolien kireyssuhdetta.</b> Älä tavoittele vanhan kiekon puolisuhdetta, vaan laskurin uuden navan geometriasta antamaa. Vanhoista kireyksistä on hyötyä vain vetopuolen tason vertailuun." },
+      { id: "viim", t: "Viimeistele", go: "tab-lopetus", g: "Avaa viimeistelylista",
+        b: "Jännitysten poisto, uusintarihtaus ja loppumittaus." }
     ]},
     rihtaus: { t: "Nykyisen kiekon rihtaus", d: "Kiekko heittää tai on vino. Selvitetään syy ennen kuin kierretään mitään.", steps: [
       { t: "Tarkista kiekon kunto",
@@ -1286,17 +1376,91 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
         b: "Vertaa mittarajoihin. Jos kaikki on rajoissa, kiekko on valmis." }
     ]}
   };
-  var JOB_ORDER = ["uusi", "vaihto", "rihtaus", "pinna", "huolto"];
+  var JOB_ORDER = ["uusi", "vanne", "napa", "rihtaus", "pinna", "huolto"];
 
   function jobId(){ var j = S.get("kv.job", ""); return JOBS[j] ? j : ""; }
-  function jobDone(j, i){ return S.get("kv.js-" + j + "-" + i, "0") === "1"; }
-  function jobProgress(j){
-    var n = JOBS[j].steps.length, d = 0, cur = -1;
-    for(var i = 0; i < n; i++){ if(jobDone(j, i)) d++; else if(cur < 0) cur = i; }
-    return { n: n, d: d, cur: cur };
+  function jAnswer(j, key, get){ return (get || function(k){ return S.get(k, ""); })("kv.jq-" + j + "-" + key) || ""; }
+
+  /* näkyvät vaiheet; get = arvon lukija (live-tila tai projektin tallennettu data) */
+  function visibleSteps(j, get){
+    var out = [];
+    JOBS[j].steps.forEach(function(st, idx){
+      if(st.when && jAnswer(j, st.when[0], get) !== st.when[1]) return;
+      out.push({ st: st, id: st.id || String(idx) });
+    });
+    return out;
+  }
+  function stepDone(j, v, get){
+    var g = get || function(k){ return S.get(k, ""); };
+    if(v.st.ask) return !!jAnswer(j, v.st.ask, get);
+    return g("kv.js-" + j + "-" + v.id) === "1";
+  }
+  function jobProgress(j, get){
+    var vs = visibleSteps(j, get), d = 0, cur = -1, pending = false;
+    vs.forEach(function(v, i){
+      if(stepDone(j, v, get)) d++; else if(cur < 0) cur = i;
+      if(v.st.ask && !jAnswer(j, v.st.ask, get)){
+        for(var k = 0; k < JOBS[j].steps.length; k++){ var w = JOBS[j].steps[k].when; if(w && w[0] === v.st.ask){ pending = true; break; } }
+      }
+    });
+    return { n: vs.length, d: d, cur: cur, vs: vs, pending: pending };
+  }
+  function jobSize(j){
+    var base = 0, groups = {};
+    JOBS[j].steps.forEach(function(st){
+      if(!st.when){ base++; return; }
+      var g = groups[st.when[0]] || (groups[st.when[0]] = {});
+      g[st.when[1]] = (g[st.when[1]] || 0) + 1;
+    });
+    var extra = 0;
+    Object.keys(groups).forEach(function(k){ var m = 0; Object.keys(groups[k]).forEach(function(v){ m = Math.max(m, groups[k][v]); }); extra += m; });
+    return base + extra;
   }
 
-  var jobCloseIdx = -1;
+  /* --- vanhat kireydet --- */
+  function oldData(){
+    try{ var o = JSON.parse(S.get("kv.oldtm", "null")); return o && o.r ? o : null; }catch(e){ return null; }
+  }
+  function oldSide(o, side){
+    var cal = null; try{ cal = readCal(); }catch(e){}
+    var vals = (o[side] || []).map(function(v){ return (v === null || v === undefined || !isFinite(v)) ? null : (cal ? interp(cal, v, "r", "t") : v); });
+    var st = stats(vals);
+    var devs = vals.map(function(v){ return (v === null || !st) ? null : (v - st.mean) / st.mean * 100; });
+    return { vals: vals, st: st, devs: devs, unit: cal ? " kgf" : "" };
+  }
+  function findCluster(devs){
+    var run = 0, dir = 0;
+    for(var i = 0; i < devs.length; i++){
+      var d = devs[i], di = (d === null || Math.abs(d) < 8) ? 0 : (d > 0 ? 1 : -1);
+      if(di !== 0 && di === dir) run++; else { run = di === 0 ? 0 : 1; dir = di; }
+      if(run >= 3) return [i - 1, i + 1];
+    }
+    return null;
+  }
+  function oldStatus(){
+    var o = oldData();
+    if(!o) return 'Ei vielä tallennettu. Mittaa kireydet Kireys-näkymässä ja tallenna ne tästä.';
+    var r = oldSide(o, "r"), l = oldSide(o, "l"), dt = new Date(o.at || Date.now());
+    return 'Tallennettu ' + ((r.st ? r.st.n : 0) + (l.st ? l.st.n : 0)) + ' lukemaa ' + dt.getDate() + '.' + (dt.getMonth() + 1) + '. klo ' +
+      dt.getHours() + '.' + String(dt.getMinutes()).padStart(2, "0") +
+      (r.st ? ' · vetopuoli ka ' + fmt(r.st.mean) + r.unit : '') + (l.st ? ' · vapaapuoli ka ' + fmt(l.st.mean) + l.unit : '');
+  }
+  function saveOld(stepId){
+    var r = [], l = [], n = 0;
+    for(var i = 0; i < tmCount; i++){
+      var a = TM.r[i], b = TM.l[i];
+      r.push(a === undefined ? null : a); l.push(b === undefined ? null : b);
+      if(a !== null && a !== undefined) n++;
+      if(b !== null && b !== undefined) n++;
+    }
+    if(!n) return false;
+    S.set("kv.oldtm", JSON.stringify({ r: r, l: l, at: Date.now() }));
+    var j = jobId();
+    if(j && stepId) S.set("kv.js-" + j + "-" + stepId, "1");
+    return true;
+  }
+
+  var jobCloseId = null, jobMsg = {};
   function renderJob(){
     var j = jobId();
     $("job-choose").hidden = !!j;
@@ -1308,68 +1472,101 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
         return '<button class="jobcard" data-job="' + k + '">' +
           '<span class="jc-t">' + jicon(k, 22) + job.t + '</span>' +
           '<span class="jc-d">' + job.d + '</span>' +
-          '<span class="jc-m">' + job.steps.length + ' vaihetta · ' + Object.keys(tools).join(", ") + '</span></button>';
+          '<span class="jc-m">' + jobSize(k) + ' vaihetta · ' + Object.keys(tools).join(", ") + '</span></button>';
       }).join("");
       updateJobChrome();
       return;
     }
     var job = JOBS[j], pr = jobProgress(j);
-    var open = {};
-    var old = $("jsteps").querySelectorAll("details");
-    for(var o = 0; o < old.length; o++) if(old[o].open) open[old[o].getAttribute("data-i")] = 1;
-    if(jobCloseIdx >= 0){ delete open[jobCloseIdx]; jobCloseIdx = -1; }
+    var open = {}, old = $("jsteps").querySelectorAll("details");
+    for(var o = 0; o < old.length; o++) if(old[o].open) open[old[o].getAttribute("data-id")] = 1;
+    if(jobCloseId !== null){ delete open[jobCloseId]; jobCloseId = null; }
     $("job-title").textContent = job.t;
     $("job-desc").textContent = job.d;
-    $("job-bar").style.width = (pr.d / pr.n * 100) + "%";
-    $("job-count").textContent = pr.d + " / " + pr.n;
-    $("jsteps").innerHTML = job.steps.map(function(st, i){
-      var done = jobDone(j, i), cur = (i === pr.cur);
-      var isOpen = cur || open[i];
-      return '<li class="jstep' + (done ? " done" : "") + (cur ? " cur" : "") + '">' +
-        '<details data-i="' + i + '"' + (isOpen ? " open" : "") + '>' +
-        '<summary>' +
-        '<input type="checkbox" data-jstep="' + i + '"' + (done ? " checked" : "") + ' aria-label="Merkitse tehdyksi: ' + st.t + '">' +
+    $("job-bar").style.width = (pr.n ? pr.d / pr.n * 100 : 0) + "%";
+    $("job-count").textContent = pr.d + " / " + pr.n + (pr.pending ? "+" : "");
+
+    var html = pr.vs.map(function(v, i){
+      var st = v.st, done = stepDone(j, v), cur = (i === pr.cur), isOpen = cur || open[v.id];
+      var ans = st.ask ? jAnswer(j, st.ask) : "";
+      var ansLabel = "";
+      if(ans) st.opts.forEach(function(op){ if(op[0] === ans) ansLabel = op[1].split(" — ")[0]; });
+      var head = st.ask
+        ? '<span class="jq-badge" aria-hidden="true">' + (ans ? "✓" : "?") + '</span>'
+        : '<input type="checkbox" data-jstep="' + v.id + '"' + (done ? " checked" : "") + ' aria-label="Merkitse tehdyksi: ' + st.t + '">';
+      var body = '<p>' + st.b + '</p>';
+      if(st.ask){
+        body += '<fieldset class="jask"><legend class="sr">' + st.t + '</legend>' + st.opts.map(function(op){
+          return '<label><input type="radio" name="jq-' + st.ask + '" value="' + op[0] + '" data-jq="' + st.ask + '" data-jid="' + v.id + '"' + (ans === op[0] ? " checked" : "") + '><span>' + op[1] + '</span></label>';
+        }).join("") + '</fieldset>';
+        if(ans && st.notes && st.notes[ans]) body += '<div class="note ' + (ans === "yes" && st.ask === "damage" ? "warn" : "info") + '"><span>' + st.notes[ans] + '</span></div>';
+      }
+      if(st.bIf){
+        var a2 = jAnswer(j, st.bIf.key);
+        if(a2 && st.bIf.map[a2]) body += '<div class="note ' + (a2 === "yes" ? "warn" : "info") + '"><span>' + st.bIf.map[a2] + '</span></div>';
+      }
+      if(st.act === "saveold"){
+        body += '<div class="oldstat">' + oldStatus() + '</div>';
+        if(jobMsg[v.id]) body += '<div class="note crit"><span>' + jobMsg[v.id] + '</span></div>';
+      }
+      var btns = '';
+      if(st.go) btns += '<button class="btn' + (st.act ? '' : ' primary') + '" data-go="' + st.go + '">' + st.g + '</button>';
+      if(st.act === "saveold") btns += '<button class="btn primary" data-jact="saveold" data-jid="' + v.id + '">Tallenna nykyiset lukemat vanhoiksi</button>';
+      if(!st.ask) btns += '<button class="btn" data-jdone="' + v.id + '">' + (done ? "Merkitse tekemättömäksi" : "Merkitse tehdyksi") + '</button>';
+      body += '<div class="row">' + btns + '</div>';
+      return '<li class="jstep' + (st.ask ? " q" : "") + (done ? " done" : "") + (cur ? " cur" : "") + '">' +
+        '<details data-id="' + v.id + '"' + (isOpen ? " open" : "") + '><summary>' + head +
         '<span class="jn">' + String(i + 1).padStart(2, "0") + '</span>' +
         '<span class="jt">' + st.t + '</span>' +
+        (ansLabel ? '<span class="jans">' + ansLabel + '</span>' : '') +
         (cur ? '<span class="jnow">nyt</span>' : '') +
         (st.go ? '<span class="jtool">' + TOOLNAME[st.go] + '</span>' : '') +
         '<svg class="chev" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"/></svg>' +
-        '</summary>' +
-        '<div class="jbody"><p>' + st.b + '</p><div class="row">' +
-        (st.go ? '<button class="btn primary" data-go="' + st.go + '">' + st.g + '</button>' : '') +
-        '<button class="btn" data-jdone="' + i + '">' + (done ? "Merkitse tekemättömäksi" : "Merkitse tehdyksi") + '</button>' +
-        '</div></div></details></li>';
+        '</summary><div class="jbody">' + body + '</div></details></li>';
     }).join("");
+    if(pr.pending) html += '<li class="jpending">Loput vaiheet tulevat näkyviin, kun vastaat kysymykseen.</li>';
+    $("jsteps").innerHTML = html;
+
     var doneCard = $("job-done");
-    if(pr.d === pr.n){
+    if(pr.d === pr.n && !pr.pending){
       doneCard.hidden = false;
-      doneCard.innerHTML = '<h2>Työ valmis</h2><p class="lede" style="margin-top:4px">Kaikki vaiheet on merkitty tehdyiksi. Kirjaa tärkeimmät lukemat projektin muistiinpanoihin, niin ne löytyvät seuraavalla kerralla.</p>' +
+      doneCard.innerHTML = '<h2>Työ valmis</h2><p class="lede" style="margin-top:4px">Kaikki vaiheet on tehty. Kirjaa tärkeimmät lukemat projektin muistiinpanoihin, niin ne löytyvät seuraavalla kerralla.</p>' +
         '<div class="row"><button class="btn primary" data-go="tab-proj">Avaa muistiinpanot</button><button class="btn" id="job-new">Aloita uusi työ</button></div>';
-    } else {
-      doneCard.hidden = true; doneCard.innerHTML = "";
-    }
+    } else { doneCard.hidden = true; doneCard.innerHTML = ""; }
     updateJobChrome();
   }
 
-  function setStep(i, val){
+  function setStep(id, val){
     var j = jobId();
     if(!j) return;
-    S.set("kv.js-" + j + "-" + i, val ? "1" : "0");
-    if(val) jobCloseIdx = i;
+    S.set("kv.js-" + j + "-" + id, val ? "1" : "0");
+    if(val) jobCloseId = id;
     renderJob();
     updateTopbar();
   }
 
   document.addEventListener("click", function(e){
-    var t = e.target && e.target.closest ? e.target.closest("[data-job],[data-jdone],#job-change,#job-new") : null;
+    var t = e.target && e.target.closest ? e.target.closest("[data-job],[data-jdone],[data-jact],#job-change,#job-new") : null;
     if(!t) return;
     if(t.hasAttribute("data-job")){ S.set("kv.job", t.getAttribute("data-job")); renderJob(); updateTopbar(); window.scrollTo(0, 0); }
-    else if(t.hasAttribute("data-jdone")){ var i = +t.getAttribute("data-jdone"); setStep(i, !jobDone(jobId(), i)); }
+    else if(t.hasAttribute("data-jdone")){ var id = t.getAttribute("data-jdone"); setStep(id, S.get("kv.js-" + jobId() + "-" + id, "0") !== "1"); }
+    else if(t.hasAttribute("data-jact")){
+      var sid = t.getAttribute("data-jid");
+      if(saveOld(sid)){ jobMsg[sid] = ""; jobCloseId = sid; }
+      else jobMsg[sid] = "Ruudukossa ei ole lukemia. Mittaa kireydet ensin Kireys-näkymässä.";
+      renderJob(); renderOld(); updateTopbar();
+    }
     else { S.set("kv.job", ""); renderJob(); updateTopbar(); window.scrollTo(0, 0); }
   });
   document.addEventListener("change", function(e){
     var t = e.target;
-    if(t && t.hasAttribute && t.hasAttribute("data-jstep")) setStep(+t.getAttribute("data-jstep"), t.checked);
+    if(!t || !t.hasAttribute) return;
+    if(t.hasAttribute("data-jstep")) setStep(t.getAttribute("data-jstep"), t.checked);
+    else if(t.hasAttribute("data-jq")){
+      S.set("kv.jq-" + jobId() + "-" + t.getAttribute("data-jq"), t.value);
+      jobCloseId = t.getAttribute("data-jid");
+      renderJob(); renderOld(); updateTopbar();
+    }
   });
 
   function updateJobChrome(){
@@ -1383,14 +1580,63 @@ input[type=text]:focus{outline:none; border-color:var(--accent); box-shadow:0 0 
       }
       var job = JOBS[j], pr = jobProgress(j);
       $("start-l1").textContent = job.t;
-      $("start-l2").textContent = pr.cur < 0 ? "valmis" : ("vaihe " + (pr.cur + 1) + " / " + pr.n);
+      $("start-l2").textContent = pr.cur < 0 ? (pr.pending ? "vastaa kysymykseen" : "valmis") : ("vaihe " + (pr.cur + 1) + " / " + pr.n + (pr.pending ? "+" : ""));
       if(currentTab !== "tab-tyo" && pr.cur >= 0){
         strip.hidden = false;
-        strip.innerHTML = '<span class="eyebrow">Työ</span><span><b>' + job.t + '</b> · vaihe ' + (pr.cur + 1) + ' / ' + pr.n + ': ' + job.steps[pr.cur].t + '</span>' +
+        strip.innerHTML = '<span class="eyebrow">Työ</span><span><b>' + job.t + '</b> · vaihe ' + (pr.cur + 1) + ' / ' + pr.n + ': ' + pr.vs[pr.cur].st.t + '</span>' +
           '<button class="btn" data-go="tab-tyo">Takaisin työhön</button>';
       } else { strip.hidden = true; strip.innerHTML = ""; }
     }catch(err){}
   }
+
+  /* --- vertailu Kireys-näkymässä --- */
+  var oldClearArmed = false;
+  function renderOld(){
+    var card = $("old-card");
+    if(!card) return;
+    var o = oldData();
+    if(!o){ card.hidden = true; return; }
+    card.hidden = false;
+    var r = oldSide(o, "r"), l = oldSide(o, "l");
+    var nowR = null, nowL = null;
+    try{
+      var cal = readCal();
+      var conv = function(arr){ return stats((arr || []).slice(0, tmCount).map(function(v){ return (v === null || v === undefined || !isFinite(v)) ? null : (cal ? interp(cal, v, "r", "t") : v); })); };
+      nowR = conv(TM.r); nowL = conv(TM.l);
+    }catch(e){}
+    $("old-lede").textContent = oldStatus() + ".";
+    function tile(cls, label, old, now, unit){
+      var diff = (old && now) ? (now.mean - old.mean) / old.mean * 100 : null;
+      return '<div class="res-item ' + cls + '"><div class="k">' + label + '</div>' +
+        '<div class="v">' + (old ? fmt(old.mean) : "–") + '<small>' + unit + ' vanha</small></div>' +
+        '<div class="s">' + (now ? 'nyt ' + fmt(now.mean) + unit + (diff !== null ? ' · ' + (diff >= 0 ? "+" : "−") + fmt(Math.abs(diff), 0) + ' %' : '') : 'uutta kiekkoa ei ole vielä mitattu') + '</div></div>';
+    }
+    $("old-res").innerHTML = tile("d", "Vetopuoli", r.st, nowR, r.unit) + tile("n", "Vapaapuoli", l.st, nowL, l.unit);
+    var notes = [];
+    var dmg = S.get("kv.jq-vanne-damage", "");
+    if(dmg === "yes") notes.push(["warn", "Vanne oli kolhiintunut ja rihdattu. Käytä vanhoista vain puolien keskiarvoja suuntaa-antavina — yksittäiset lukemat kertovat kolhun paikan, eivät oikeaa kireyttä."]);
+    [["r", "vetopuolella", r], ["l", "vapaapuolella", l]].forEach(function(x){
+      var c = findCluster(x[2].devs);
+      if(c) notes.push(["warn", "Vanhoissa lukemissa on kasautuma " + x[1] + " pinnoissa " + (c[0] + 1) + "–" + (c[1] + 1) + ". Vanne on todennäköisesti ollut kolhiintunut siitä kohdasta, ja kireyksillä on kompensoitu vääntymää." + (dmg === "unk" ? " Voit päivittää vastauksesi Työ-näkymässä." : "")]);
+    });
+    if(dmg === "no" && !notes.length) notes.push(["ok", "Vanhat kireydet ovat tasaiset — tavoittele uudessa kiekossa samoja puolikohtaisia keskiarvoja."]);
+    $("old-notes").innerHTML = notes.map(function(x){ return '<div class="note ' + x[0] + '"><span>' + x[1] + '</span></div>'; }).join("");
+    var all = [].concat(r.devs, l.devs).filter(function(x){ return x !== null; }).map(Math.abs);
+    var dom = all.length ? Math.max(20, Math.ceil(Math.max.apply(null, all) / 5) * 5) : 20;
+    drawWheelSide("old-r", { devs: r.devs, vals: r.vals, st: r.st, off: 0 }, dom, r.unit, "VANHA · VETOPUOLI", "var(--drive)");
+    drawWheelSide("old-l", { devs: l.devs, vals: l.vals, st: l.st, off: 1 }, dom, l.unit, "VANHA · VAPAAPUOLI", "var(--nd)");
+  }
+  $("old-clear").addEventListener("click", function(){
+    var b = $("old-clear");
+    if(!oldClearArmed){
+      oldClearArmed = true; b.textContent = "Varmista poisto";
+      setTimeout(function(){ oldClearArmed = false; b.textContent = "Poista vanhat kireydet"; }, 5000);
+      return;
+    }
+    oldClearArmed = false; b.textContent = "Poista vanhat kireydet";
+    try{ localStorage.removeItem("kv.oldtm"); }catch(e){}
+    renderOld(); renderJob();
+  });
 
   function checked(listId){
     var el = document.getElementById(listId);
@@ -2491,9 +2737,8 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
     try{
       var jk = d["kv.job"];
       if(jk && JOBS[jk]){
-        var jd = 0;
-        for(var q = 0; q < JOBS[jk].steps.length; q++) if(d["kv.js-" + jk + "-" + q] === "1") jd++;
-        body.unshift(JOBS[jk].t.toLowerCase() + " " + jd + "/" + JOBS[jk].steps.length);
+        var jp2 = jobProgress(jk, function(k){ return d[k] || ""; });
+        body.unshift(JOBS[jk].t.toLowerCase() + " " + jp2.d + "/" + jp2.n + (jp2.pending ? "+" : ""));
       }
     }catch(e){}
     return (head.join(" · ") || "ei mittoja") + (body.length ? " — " + body.join(" · ") : "");
@@ -3161,7 +3406,7 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
 
   function drawWheelSide(id, ring, dom, unit, title, sideVar){
     var svg = $(id), C = 160, CY = 176, base = 104, maxBar = 34, out = [];
-    var half = tmCount;
+    var half = ring.devs ? ring.devs.length : tmCount;
     if(!half){ svg.innerHTML = ""; return; }
     var step = 360 / (half * 2);
 
@@ -3268,6 +3513,7 @@ var BUILTIN={r:[["Accel",532.0,0,"tubular",0,"Spocalc"],["Accel",481.0,0,"tubula
       out[side] = { st: st, devs: devs, raw: raw, vals: vals };
     });
     if(tmView === "wheel") drawPolar(out, unit);
+    try{ renderOld(); }catch(e){}
 
     /* ----- advice ----- */
     var items = [];
